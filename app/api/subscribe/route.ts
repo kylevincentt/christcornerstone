@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { sql } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   const { email, name } = await request.json();
@@ -8,17 +8,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Valid email address required' }, { status: 400 });
   }
 
-  // Save to Supabase
-  if (supabaseAdmin) {
-    const { error } = await supabaseAdmin.from('email_subscribers').upsert({
-      email: email.toLowerCase().trim(),
-      name: name || null,
-      subscribed_at: new Date().toISOString(),
-      active: true,
-    }, { onConflict: 'email' });
-
-    if (error) {
-      console.error('Supabase error:', error);
+  // Save to Neon database
+  if (sql) {
+    try {
+      await sql`
+        INSERT INTO email_subscribers (email, name, subscribed_at, active)
+        VALUES (${email.toLowerCase().trim()}, ${name || null}, NOW(), TRUE)
+        ON CONFLICT (email) DO UPDATE SET
+          name = EXCLUDED.name,
+          subscribed_at = NOW(),
+          active = TRUE
+      `;
+    } catch (err) {
+      console.error('Database error:', err);
       return NextResponse.json({ error: 'Database error' }, { status: 500 });
     }
   }
