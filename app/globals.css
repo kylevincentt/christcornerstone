@@ -135,3 +135,38 @@ body.admin-page::before {
   max-width: 550px;
   margin: 0 auto;
 }
+
+/* Server-component-safe hover utilities */
+.hover-gold-card {
+  transition: background 0.2s, border-color 0.2s;
+}
+.hover-gold-card:hover {
+  background: rgba(201,168,76,0.09) !important;
+  border-color: rgba(201,168,76,0.3) !important;
+}
+.hover-gold-border {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.hover-gold-border:hover {
+  border-color: rgba(201,168,76,0.3) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+.hover-gold-border-soft {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.hover-gold-border-soft:hover {
+  border-color: rgba(201,168,76,0.25) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+}
+.hover-gold-bg {
+  transition: background 0.2s;
+}
+.hover-gold-bg:hover {
+  background: rgba(201,168,76,0.05) !important;
+}
+.hover-gold-bg-sm {
+  transition: background 0.2s;
+}
+.hover-gold-bg-sm:hover {
+  background: rgba(201,168,76,0.09) !important;
+}
