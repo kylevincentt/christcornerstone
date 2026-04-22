@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { sql } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   const email = request.nextUrl.searchParams.get('email');
   if (!email) return NextResponse.redirect(new URL('/', request.url));
 
-  if (supabaseAdmin) {
-    await supabaseAdmin.from('email_subscribers').update({ active: false }).eq('email', email.toLowerCase());
+  if (sql) {
+    try {
+      await sql`UPDATE email_subscribers SET active = FALSE WHERE email = ${email.toLowerCase()}`;
+    } catch (err) {
+      console.error('Unsubscribe error:', err);
+    }
   }
 
   return new NextResponse(`
