@@ -1,17 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
+import { neon } from '@neondatabase/serverless';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const connectionString =
+  process.env.STORAGE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  '';
 
-export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+// sql is a tagged-template SQL executor: await sql`SELECT * FROM table`
+export const sql = connectionString ? neon(connectionString) : null;
 
-export const supabaseAdmin = supabaseUrl && supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey)
-  : null;
+// Legacy aliases so existing import paths still work
+export const supabaseAdmin = sql ? { sql } : null;
 
 export function isSupabaseConfigured() {
-  return Boolean(supabaseUrl && supabaseAnonKey);
+  return Boolean(connectionString);
 }
