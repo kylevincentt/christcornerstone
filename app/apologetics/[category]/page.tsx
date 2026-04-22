@@ -105,10 +105,8 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
               <Link
                 key={c.id}
                 href={`/apologetics/${c.slug}`}
-                className="flex items-center gap-3 rounded-xl p-4 no-underline transition-all"
+                className="hover-gold-bg-sm flex items-center gap-3 rounded-xl p-4 no-underline transition-all"
                 style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.08)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(201,168,76,0.09)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(201,168,76,0.04)')}
               >
                 <span className="text-xl">{c.icon}</span>
                 <span className="font-cinzel text-gold tracking-[0.1em] uppercase" style={{ fontSize: '0.75rem' }}>
