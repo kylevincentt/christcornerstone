@@ -27,7 +27,7 @@ export default function ReligionsPage() {
           Other Religions &amp; <em className="not-italic text-gold-light">Christianity</em>
         </h1>
         <p className="font-cormorant text-text-light max-w-xl mx-auto leading-relaxed" style={{ fontSize: '1.3rem' }}>
-          Every major religion asks the same deep questions. See how Christianity's answers compare — respectfully, clearly, and honestly.
+          Every major religion asks the same deep questions. See how Christianity&apos;s answers compare — respectfully, clearly, and honestly.
         </p>
       </div>
 
@@ -38,18 +38,10 @@ export default function ReligionsPage() {
               <AnimateOnScroll key={religion.id} delay={i * 80}>
                 <Link
                   href={`/religions/${religion.slug}`}
-                  className="block no-underline rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group"
+                  className="hover-gold-border block no-underline rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group"
                   style={{
                     background: 'var(--deep-navy)',
                     border: '1px solid rgba(201,168,76,0.08)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)';
-                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(201,168,76,0.08)';
-                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   <div className="flex items-center gap-4 px-7 py-5" style={{ borderBottom: '1px solid rgba(201,168,76,0.07)' }}>
@@ -60,9 +52,7 @@ export default function ReligionsPage() {
                         {religion.adherents}
                       </p>
                     </div>
-                    <span
-                      className="ml-auto font-cinzel text-gold-dim text-xs tracking-widest uppercase transition-colors group-hover:text-gold"
-                    >
+                    <span className="ml-auto font-cinzel text-gold-dim text-xs tracking-widest uppercase transition-colors group-hover:text-gold">
                       Read →
                     </span>
                   </div>
