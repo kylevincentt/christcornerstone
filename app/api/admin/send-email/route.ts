@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminSession } from '@/lib/auth';
-import { supabaseAdmin } from '@/lib/supabase';
+import { sql } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   const isAuth = await getAdminSession();
@@ -12,11 +12,15 @@ export async function POST(request: NextRequest) {
   const apiKey = process.env.SENDGRID_API_KEY;
   if (!apiKey) return NextResponse.json({ error: 'SendGrid not configured' }, { status: 500 });
 
-  // Get subscribers
+  // Get active subscribers
   let emails: string[] = [];
-  if (supabaseAdmin) {
-    const { data } = await supabaseAdmin.from('email_subscribers').select('email').eq('active', true);
-    emails = (data || []).map((s: { email: string }) => s.email);
+  if (sql) {
+    try {
+      const rows = await sql`SELECT email FROM email_subscribers WHERE active = TRUE`;
+      emails = rows.map((s: { email: string }) => s.email);
+    } catch (err) {
+      console.error('Failed to fetch subscribers:', err);
+    }
   }
 
   if (emails.length === 0) {
@@ -28,6 +32,7 @@ export async function POST(request: NextRequest) {
 
   const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'noreply@christcornerstone.org';
   const fromName = process.env.SENDGRID_FROM_NAME || 'ChristCornerstone';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://christcornerstone.org';
 
   // Send in batches of 1000
   const batchSize = 1000;
@@ -46,7 +51,7 @@ export async function POST(request: NextRequest) {
         <div style="margin-top:40px;padding-top:20px;border-top:1px solid rgba(201,168,76,0.3);text-align:center;">
           <p style="font-size:12px;color:#7a7060;">
             You're receiving this because you subscribed at christcornerstone.org<br>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL}/api/unsubscribe?email={{email}}" style="color:#8a6e2f;">Unsubscribe</a>
+            <a href="${siteUrl}/api/unsubscribe?email={{email}}" style="color:#8a6e2f;">Unsubscribe</a>
           </p>
         </div>
       </div>`,
