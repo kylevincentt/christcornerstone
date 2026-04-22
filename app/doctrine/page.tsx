@@ -40,18 +40,10 @@ export default function DoctrinePage() {
               <AnimateOnScroll key={doctrine.id} delay={i * 80}>
                 <Link
                   href={`/doctrine/${doctrine.slug}`}
-                  className="block no-underline rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group"
+                  className="hover-gold-border-soft block no-underline rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group"
                   style={{
                     background: 'var(--deep-navy)',
                     border: '1px solid rgba(201,168,76,0.08)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)';
-                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(201,168,76,0.08)';
-                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   <div className="p-8">
