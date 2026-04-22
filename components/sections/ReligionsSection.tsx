@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { RELIGIONS } from '@/lib/data';
