@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   if (sql) {
     try {
       const rows = await sql`SELECT email FROM email_subscribers WHERE active = TRUE`;
-      emails = rows.map((s: { email: string }) => s.email);
+      emails = (rows as { email: string }[]).map(s => s.email);
     } catch (err) {
       console.error('Failed to fetch subscribers:', err);
     }
