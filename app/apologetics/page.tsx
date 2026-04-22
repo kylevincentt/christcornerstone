@@ -45,18 +45,10 @@ export default function ApologeticsPage() {
                 <Link
                   key={cat.id}
                   href={`/apologetics/${cat.slug}`}
-                  className="block no-underline rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5"
+                  className="hover-gold-card block no-underline rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5"
                   style={{
                     background: 'rgba(201,168,76,0.04)',
                     border: '1px solid rgba(201,168,76,0.1)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(201,168,76,0.09)';
-                    e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(201,168,76,0.04)';
-                    e.currentTarget.style.borderColor = 'rgba(201,168,76,0.1)';
                   }}
                 >
                   <span className="block text-3xl mb-3">{cat.icon}</span>
