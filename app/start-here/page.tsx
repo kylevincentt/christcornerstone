@@ -1,4 +1,3 @@
-'use client';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
@@ -96,9 +95,7 @@ export default function StartHerePage() {
       <div className="max-w-3xl mx-auto px-8 py-20">
         {STEPS.map((step, i) => (
           <AnimateOnScroll key={step.number} delay={i * 100}>
-            <div
-              className="flex gap-8 mb-16 group"
-            >
+            <div className="flex gap-8 mb-16 group">
               <div className="flex-shrink-0">
                 <span
                   className="font-cinzel text-gold-dim"
@@ -189,13 +186,11 @@ export default function StartHerePage() {
                 <Link
                   key={p.title}
                   href={p.link}
-                  className="block no-underline rounded-2xl p-10 transition-all duration-300 hover:-translate-y-1 text-center group"
+                  className="hover-gold-bg block no-underline rounded-2xl p-10 transition-all duration-300 hover:-translate-y-1 text-center group"
                   style={{
                     background: 'var(--navy)',
                     border: '1px solid rgba(201,168,76,0.08)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(201,168,76,0.05)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--navy)')}
                 >
                   <span className="text-5xl block mb-5">{p.icon}</span>
                   <p className="font-cinzel text-gold tracking-[0.2em] uppercase mb-3" style={{ fontSize: '0.85rem' }}>
