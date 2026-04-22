@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { DOCTRINES, APOLOGETICS_QUESTIONS, QUOTES, RELIGIONS } from '@/lib/data';
 
