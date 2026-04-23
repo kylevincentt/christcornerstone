@@ -6,7 +6,7 @@ export default function DoctrineSection() {
   const featured = DOCTRINES.slice(0, 8);
 
   return (
-    <section id="doctrine" className="py-24 px-16">
+    <section id="doctrine" className="py-24 px-4 sm:px-8 md:px-16">
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto">
           {/* Header */}

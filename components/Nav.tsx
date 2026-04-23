@@ -17,7 +17,7 @@ export default function Nav() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-16 py-5 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-4 lg:px-16 py-5 transition-all duration-300"
         style={{
           background: scrolled
             ? 'rgba(10,14,26,0.98)'

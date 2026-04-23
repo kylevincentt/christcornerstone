@@ -45,7 +45,7 @@ export default function QuotesSection() {
 
         <div
           ref={trackRef}
-          className="flex gap-6 overflow-x-auto px-8 md:px-16 pb-2 cursor-grab active:cursor-grabbing"
+          className="flex flex-col md:flex-row md:overflow-x-auto gap-6 px-4 md:px-16 pb-2 md:cursor-grab md:active:cursor-grabbing"
           style={{
             scrollSnapType: 'x mandatory',
             scrollBehavior: 'smooth',
@@ -55,7 +55,7 @@ export default function QuotesSection() {
           {QUOTES.map((quote) => (
             <div
               key={quote.id}
-              className="flex-none rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
+              className="flex-none max-w-full md:max-w-none rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 width: '360px',
                 background: 'var(--navy)',

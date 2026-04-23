@@ -3,7 +3,7 @@ import EmailSignup from './EmailSignup';
 
 export default function Footer() {
   return (
-    <footer style={{ background: '#06080f', borderTop: '1px solid rgba(201,168,76,0.12)' }} className="px-16 pt-12 pb-8">
+    <footer style={{ background: '#06080f', borderTop: '1px solid rgba(201,168,76,0.12)' }} className="px-4 sm:px-8 lg:px-16 pt-12 pb-8">
       <div className="max-w-6xl mx-auto">
         {/* Email signup banner */}
         <div

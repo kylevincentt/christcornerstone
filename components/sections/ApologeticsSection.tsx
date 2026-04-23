@@ -11,7 +11,7 @@ export default function ApologeticsSection() {
   return (
     <section
       id="apologetics"
-      className="py-24 px-16 relative overflow-hidden"
+      className="py-24 px-4 sm:px-8 md:px-16 relative overflow-hidden"
       style={{
         background: 'linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%)',
         borderTop: '1px solid rgba(201,168,76,0.1)',

@@ -122,7 +122,7 @@ export default function StartHerePage() {
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className="mb-16 ml-24"
+                className="mb-8 sm:mb-16 sm:ml-24"
                 style={{ height: '1px', background: 'linear-gradient(to right, rgba(201,168,76,0.15), transparent)' }}
               />
             )}
