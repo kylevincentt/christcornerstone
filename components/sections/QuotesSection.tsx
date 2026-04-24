@@ -1,9 +1,13 @@
 'use client';
 import { useRef } from 'react';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { QUOTES } from '@/lib/data';
+import type { Quote } from '@/types';
 
-export default function QuotesSection() {
+interface Props {
+  quotes: Quote[];
+}
+
+export default function QuotesSection({ quotes }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: 'left' | 'right') => {
@@ -31,9 +35,7 @@ export default function QuotesSection() {
         </AnimateOnScroll>
       </div>
 
-      {/* Scrollable track — horizontal on all breakpoints */}
       <div className="relative">
-        {/* Fade edges (desktop only — avoid clipping cards on narrow screens) */}
         <div
           className="hidden md:block absolute top-0 bottom-0 left-0 w-24 pointer-events-none z-10"
           style={{ background: 'linear-gradient(to right, var(--deep-navy), transparent)' }}
@@ -56,7 +58,7 @@ export default function QuotesSection() {
             WebkitOverflowScrolling: 'touch',
           }}
         >
-          {QUOTES.map((quote) => (
+          {quotes.map((quote) => (
             <article
               key={quote.id}
               className="flex-none rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
@@ -108,7 +110,6 @@ export default function QuotesSection() {
         </div>
       </div>
 
-      {/* Nav buttons — now work on every breakpoint because track is horizontal */}
       <div className="flex justify-center gap-3 mt-10">
         <button
           type="button"
