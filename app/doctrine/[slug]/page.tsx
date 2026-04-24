@@ -150,4 +150,4 @@ export default async function DoctrineDetailPage({ params }: Props) {
       </div>
     </div>
   );
-v
+}
