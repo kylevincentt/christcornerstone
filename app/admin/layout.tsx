@@ -1,11 +1,28 @@
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { getAdminSession } from '@/lib/auth';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Read pathname from middleware-set header (Next 14 doesn't expose it directly to layouts).
+  // Falls back to a referer/url heuristic. Critically: the /admin/login page must skip auth so it
+  // can render the login form — otherwise auth-redirect loops on itself.
+  const hdrs = await headers();
+  const pathname =
+    hdrs.get('x-invoke-path') ||
+    hdrs.get('next-url') ||
+    hdrs.get('x-pathname') ||
+    '';
+
+  const isLoginRoute = pathname.endsWith('/admin/login') || pathname === '/admin/login';
   const isAuthenticated = await getAdminSession();
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isLoginRoute) {
     redirect('/admin/login');
+  }
+
+  // Login page renders chrome-less so it doesn't show the sidebar before sign-in.
+  if (isLoginRoute) {
+    return <div style={{ background: '#06080f', minHeight: '100vh' }}>{children}</div>;
   }
 
   return (
