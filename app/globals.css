@@ -2,7 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* ──────────────────────────────────────────────────────────────────────────
+ * Color tokens — dark theme is the default.
+ * Swap via <html data-theme="light"> (see components/ThemeToggle.tsx).
+ * ────────────────────────────────────────────────────────────────────────── */
+
+:root,
+:root[data-theme='dark'] {
   --midnight: #0a0e1a;
   --deep-navy: #0f1628;
   --navy: #141d35;
@@ -13,6 +19,33 @@
   --cream-dark: #e8dfc8;
   --text-light: #d4c9b0;
   --text-muted: #7a7060;
+  --page-bg: 10, 14, 26;
+  --panel-bg: 15, 22, 40;
+  --footer-bg: #06080f;
+  --gold-rgb: 201, 168, 76;
+  --gold-glow-alpha: 0.08;
+  --noise-opacity: 0.35;
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --midnight: #faf6eb;
+  --deep-navy: #f1e9d3;
+  --navy: #e8ddbf;
+  --gold: #8a6e2f;
+  --gold-light: #6e5624;
+  --gold-dim: #a88636;
+  --cream: #1a1511;
+  --cream-dark: #2b2318;
+  --text-light: #3a3024;
+  --text-muted: #6a5e4a;
+  --page-bg: 250, 246, 235;
+  --panel-bg: 241, 233, 211;
+  --footer-bg: #ece2c5;
+  --gold-rgb: 138, 110, 47;
+  --gold-glow-alpha: 0.06;
+  --noise-opacity: 0.08;
+  color-scheme: light;
 }
 
 html {
@@ -25,13 +58,11 @@ body {
   font-family: 'Lato', sans-serif;
   font-weight: 300;
   overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -39,14 +70,12 @@ body {
   }
 }
 
-/* Visible focus ring for keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* Skip-to-content link for keyboard & screen-reader users */
 .skip-link {
   position: absolute;
   top: -100px;
@@ -63,11 +92,8 @@ body {
   text-decoration: none;
   transition: top 0.2s ease;
 }
-.skip-link:focus {
-  top: 16px;
-}
+.skip-link:focus { top: 16px; }
 
-/* Noise texture overlay */
 body::before {
   content: '';
   position: fixed;
@@ -75,25 +101,21 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.35;
+  opacity: var(--noise-opacity);
+  mix-blend-mode: multiply;
 }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--midnight); }
 ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
 
-/* Reveal animations */
 .reveal {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* Section base */
 .section-label {
   font-family: 'Cinzel', serif;
   font-size: 0.78rem;
@@ -112,30 +134,12 @@ body::before {
   line-height: 1.15;
 }
 
-.ornament {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  margin: 2rem 0;
-}
-.ornament-line {
-  height: 1px;
-  width: 60px;
-  background: linear-gradient(to right, var(--gold-dim), transparent);
-}
-.ornament-diamond {
-  width: 6px;
-  height: 6px;
-  background: var(--gold);
-  transform: rotate(45deg);
-}
+.ornament { display: flex; align-items: center; gap: 0.8rem; margin: 2rem 0; }
+.ornament-line { height: 1px; width: 60px; background: linear-gradient(to right, var(--gold-dim), transparent); }
+.ornament-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
 
-/* Admin page override - no noise overlay */
-body.admin-page::before {
-  display: none;
-}
+body.admin-page::before { display: none; }
 
-/* Prose styles for doctrine/religion full content */
 .prose-faith h2 {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.6rem;
@@ -143,70 +147,30 @@ body.admin-page::before {
   color: var(--cream);
   margin: 2rem 0 1rem;
 }
-.prose-faith p {
-  color: var(--text-light);
-  line-height: 1.8;
-  margin-bottom: 1rem;
-}
-.prose-faith strong {
-  color: var(--gold-light);
-  font-weight: 600;
-}
+.prose-faith p { color: var(--text-light); line-height: 1.8; margin-bottom: 1rem; }
+.prose-faith strong { color: var(--gold-light); font-weight: 600; }
 
-/* YouTube embed container */
 .youtube-embed {
   position: relative;
   padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
   border-radius: 1rem;
-  border: 1px solid rgba(201,168,76,0.15);
+  border: 1px solid rgba(var(--gold-rgb), 0.15);
 }
-.youtube-embed iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
+.youtube-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-/* X/Twitter embed */
-.twitter-embed {
-  max-width: 550px;
-  margin: 0 auto;
-}
+.twitter-embed { max-width: 550px; margin: 0 auto; }
 
-/* Server-component-safe hover utilities */
-.hover-gold-card {
-  transition: background 0.2s, border-color 0.2s;
-}
-.hover-gold-card:hover {
-  background: rgba(201,168,76,0.09) !important;
-  border-color: rgba(201,168,76,0.3) !important;
-}
-.hover-gold-border {
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.hover-gold-border:hover {
-  border-color: rgba(201,168,76,0.3) !important;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
-}
-.hover-gold-border-soft {
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.hover-gold-border-soft:hover {
-  border-color: rgba(201,168,76,0.25) !important;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
-}
-.hover-gold-bg {
-  transition: background 0.2s;
-}
-.hover-gold-bg:hover {
-  background: rgba(201,168,76,0.05) !important;
-}
-.hover-gold-bg-sm {
-  transition: background 0.2s;
-}
-.hover-gold-bg-sm:hover {
-  background: rgba(201,168,76,0.09) !important;
-}
+.hover-gold-card { transition: background 0.2s, border-color 0.2s; }
+.hover-gold-card:hover { background: rgba(var(--gold-rgb), 0.09) !important; border-color: rgba(var(--gold-rgb), 0.3) !important; }
+.hover-gold-border { transition: border-color 0.2s, box-shadow 0.2s; }
+.hover-gold-border:hover { border-color: rgba(var(--gold-rgb), 0.3) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important; }
+.hover-gold-border-soft { transition: border-color 0.2s, box-shadow 0.2s; }
+.hover-gold-border-soft:hover { border-color: rgba(var(--gold-rgb), 0.25) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important; }
+.hover-gold-bg { transition: background 0.2s; }
+.hover-gold-bg:hover { background: rgba(var(--gold-rgb), 0.05) !important; }
+.hover-gold-bg-sm { transition: background 0.2s; }
+.hover-gold-bg-sm:hover { background: rgba(var(--gold-rgb), 0.09) !important; }
+
+[data-theme='light'] .hero-stars { display: none; }
