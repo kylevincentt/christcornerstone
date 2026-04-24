@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { DOCTRINES } from '@/lib/data';
+import { getDoctrines } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'Core Doctrines — ChristCornerstone',
+  title: 'Core Doctrines',
   description: 'The great pillars of Christian belief, clearly explained with Scripture and historical depth.',
 };
 
-export default function DoctrinePage() {
+export default async function DoctrinePage() {
+  const doctrines = await getDoctrines();
+
   return (
     <div style={{ paddingTop: '6rem' }}>
       {/* Header */}
@@ -36,7 +38,7 @@ export default function DoctrinePage() {
       <div className="max-w-6xl mx-auto px-8 py-20">
         <AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {DOCTRINES.map((doctrine, i) => (
+            {doctrines.map((doctrine, i) => (
               <AnimateOnScroll key={doctrine.id} delay={i * 80}>
                 <Link
                   href={`/doctrine/${doctrine.slug}`}

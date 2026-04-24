@@ -1,23 +1,25 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { RELIGIONS } from '@/lib/data';
+import { getReligions, getReligionBySlug } from '@/lib/content';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return RELIGIONS.map((r) => ({ slug: r.slug }));
+  const religions = await getReligions();
+  return religions.map((r) => ({ slug: r.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const religion = RELIGIONS.find((r) => r.slug === slug);
+  const religion = await getReligionBySlug(slug);
   if (!religion) return { title: 'Not Found' };
   return {
-    title: `${religion.name} & Christianity — ChristCornerstone`,
+    title: `${religion.name} & Christianity`,
     description: religion.description,
+    alternates: { canonical: `/religions/${religion.slug}` },
   };
 }
 
@@ -54,12 +56,13 @@ function renderContent(text: string) {
 
 export default async function ReligionDetailPage({ params }: Props) {
   const { slug } = await params;
-  const religion = RELIGIONS.find((r) => r.slug === slug);
+  const religions = await getReligions();
+  const religion = religions.find((r) => r.slug === slug);
   if (!religion) notFound();
 
-  const currentIndex = RELIGIONS.findIndex((r) => r.slug === slug);
-  const prev = RELIGIONS[currentIndex - 1];
-  const next = RELIGIONS[currentIndex + 1];
+  const currentIndex = religions.findIndex((r) => r.slug === slug);
+  const prev = religions[currentIndex - 1];
+  const next = religions[currentIndex + 1];
 
   return (
     <div style={{ paddingTop: '6rem' }}>

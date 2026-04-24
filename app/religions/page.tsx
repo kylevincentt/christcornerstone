@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { RELIGIONS } from '@/lib/data';
+import { getReligions } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'Other Religions & Christianity — ChristCornerstone',
+  title: 'Other Religions & Christianity',
   description: 'See how Christianity compares to Islam, Judaism, Hinduism, Buddhism, Mormonism, and Atheism — respectfully, clearly, and honestly.',
 };
 
-export default function ReligionsPage() {
+export default async function ReligionsPage() {
+  const religions = await getReligions();
+
   return (
     <div style={{ paddingTop: '6rem' }}>
       <div
@@ -34,7 +36,7 @@ export default function ReligionsPage() {
       <div className="max-w-6xl mx-auto px-8 py-16">
         <AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {RELIGIONS.map((religion, i) => (
+            {religions.map((religion, i) => (
               <AnimateOnScroll key={religion.id} delay={i * 80}>
                 <Link
                   href={`/religions/${religion.slug}`}
