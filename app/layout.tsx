@@ -14,36 +14,19 @@ export const metadata: Metadata = {
   description:
     'Explore the evidence, doctrine, and life Christianity offers. Answers to hard questions, deep Bible study, and resources for every stage of faith.',
   metadataBase: new URL(SITE_URL),
-  alternates: {
-    canonical: '/',
-  },
-  keywords: [
-    'Christianity',
-    'Christian faith',
-    'apologetics',
-    'Bible study',
-    'doctrine',
-    'theology',
-    'Jesus Christ',
-    'Scripture',
-  ],
+  alternates: { canonical: '/' },
+  keywords: ['Christianity', 'Christian faith', 'apologetics', 'Bible study', 'doctrine', 'theology', 'Jesus Christ', 'Scripture'],
   authors: [{ name: 'ChristCornerstone' }],
   creator: 'ChristCornerstone',
   publisher: 'ChristCornerstone',
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
   },
   openGraph: {
     title: 'ChristCornerstone — A Home for Your Faith',
-    description:
-      "Truth doesn't fear questions. Explore the evidence, the doctrine, and the life Christianity offers — wherever you're starting from.",
+    description: "Truth doesn't fear questions. Explore the evidence, the doctrine, and the life Christianity offers — wherever you're starting from.",
     url: SITE_URL,
     siteName: 'ChristCornerstone',
     type: 'website',
@@ -55,23 +38,28 @@ export const metadata: Metadata = {
     description: "Truth doesn't fear questions.",
   },
   icons: {
-    icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-    ],
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
     apple: '/apple-touch-icon.png',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0a0e1a',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0a0e1a' },
+    { media: '(prefers-color-scheme: light)', color: '#faf6eb' },
+  ],
   width: 'device-width',
   initialScale: 1,
 };
 
+// Inline script — runs before first paint, reads saved theme pref, sets data-theme on <html>.
+const themeInitScript = `(function(){try{var t=localStorage.getItem('cc-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -80,9 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <a href="#main" className="skip-link">
-          Skip to main content
-        </a>
+        <a href="#main" className="skip-link">Skip to main content</a>
         <JsonLd />
         <Nav />
         <main id="main">{children}</main>
