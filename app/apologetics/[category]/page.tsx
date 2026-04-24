@@ -16,8 +16,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cat = APOLOGETICS_CATEGORIES.find((c) => c.slug === category);
   if (!cat) return { title: 'Category Not Found' };
   return {
-    title: `${cat.title} Apologetics — ChristCornerstone`,
+    title: `${cat.title} Apologetics`,
     description: cat.description,
+    alternates: { canonical: `/apologetics/${cat.slug}` },
   };
 }
 
@@ -48,11 +49,20 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
         >
           ← All Apologetics
         </Link>
-        <span className="text-5xl block mb-4">{cat.icon}</span>
+        <span className="text-5xl block mb-4" aria-hidden="true">{cat.icon}</span>
         <span className="section-label">{cat.title}</span>
-        <h1 className="font-cormorant font-light text-cream mt-2 mb-4" style={{ fontSize: 'clamp(2rem, 4vw, 4rem)', lineHeight: 1.1 }}>
-          {cat.description}
+        <h1
+          className="font-cormorant font-light text-cream mt-2 mb-4"
+          style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', lineHeight: 1.1 }}
+        >
+          {cat.title} <em className="not-italic text-gold-light">Apologetics</em>
         </h1>
+        <p
+          className="font-cormorant text-text-light max-w-xl mx-auto leading-relaxed"
+          style={{ fontSize: '1.2rem' }}
+        >
+          {cat.description}
+        </p>
       </div>
 
       <div className="max-w-3xl mx-auto px-8 py-16">
@@ -68,7 +78,7 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
         ) : (
           <div className="space-y-6">
             {questions.map((q) => (
-              <div
+              <article
                 key={q.id}
                 className="rounded-2xl p-7"
                 style={{ background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.1)' }}
@@ -90,7 +100,7 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
                     {q.go_deeper}
                   </p>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}
@@ -108,7 +118,7 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
                 className="hover-gold-bg-sm flex items-center gap-3 rounded-xl p-4 no-underline transition-all"
                 style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.08)' }}
               >
-                <span className="text-xl">{c.icon}</span>
+                <span className="text-xl" aria-hidden="true">{c.icon}</span>
                 <span className="font-cinzel text-gold tracking-[0.1em] uppercase" style={{ fontSize: '0.75rem' }}>
                   {c.title}
                 </span>
