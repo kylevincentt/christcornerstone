@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import QuotesSection from '@/components/sections/QuotesSection';
+import { getQuotes } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'Christian Quotes — ChristCornerstone',
+  title: 'Christian Quotes',
   description: 'Words of wisdom from saints, scholars, reformers, and seekers — across 2,000 years of Christian thought.',
 };
 
-export default function QuotesPage() {
+export default async function QuotesPage() {
+  const quotes = await getQuotes();
   return (
     <div style={{ paddingTop: '6rem' }}>
       <div
@@ -28,7 +30,7 @@ export default function QuotesPage() {
           Words of wisdom from saints, scholars, reformers, and seekers — across 2,000 years of Christian thought.
         </p>
       </div>
-      <QuotesSection />
+      <QuotesSection quotes={quotes} />
     </div>
   );
 }
