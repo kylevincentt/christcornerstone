@@ -1,9 +1,13 @@
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { DOCTRINES } from '@/lib/data';
+import type { Doctrine } from '@/types';
 
-export default function DoctrineSection() {
-  const featured = DOCTRINES.slice(0, 8);
+interface Props {
+  doctrines: Doctrine[];
+}
+
+export default function DoctrineSection({ doctrines }: Props) {
+  const featured = doctrines.slice(0, 8);
 
   return (
     <section id="doctrine" className="py-24 px-4 sm:px-8 md:px-16">
@@ -40,7 +44,6 @@ export default function DoctrineSection() {
                   padding: '1.8rem',
                 }}
               >
-                {/* Gold left bar on hover */}
                 <div
                   className="absolute top-0 left-0 w-0.5 h-0 bg-gold transition-all duration-300 group-hover:h-full"
                   style={{ transformOrigin: 'bottom' }}
@@ -62,7 +65,6 @@ export default function DoctrineSection() {
                   {doctrine.description}
                 </p>
 
-                {/* Hover overlay */}
                 <div
                   className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: 'rgba(10,14,26,0.96)' }}

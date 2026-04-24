@@ -1,23 +1,25 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { DOCTRINES } from '@/lib/data';
+import { getDoctrines, getDoctrineBySlug } from '@/lib/content';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return DOCTRINES.map((d) => ({ slug: d.slug }));
+  const doctrines = await getDoctrines();
+  return doctrines.map((d) => ({ slug: d.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const doctrine = DOCTRINES.find((d) => d.slug === slug);
+  const doctrine = await getDoctrineBySlug(slug);
   if (!doctrine) return { title: 'Doctrine Not Found' };
   return {
-    title: `${doctrine.name} — ChristCornerstone`,
+    title: doctrine.name,
     description: doctrine.description,
+    alternates: { canonical: `/doctrine/${doctrine.slug}` },
   };
 }
 
@@ -60,12 +62,13 @@ function renderContent(text: string) {
 
 export default async function DoctrineDetailPage({ params }: Props) {
   const { slug } = await params;
-  const doctrine = DOCTRINES.find((d) => d.slug === slug);
+  const doctrines = await getDoctrines();
+  const doctrine = doctrines.find((d) => d.slug === slug);
   if (!doctrine) notFound();
 
-  const currentIndex = DOCTRINES.findIndex((d) => d.slug === slug);
-  const prev = DOCTRINES[currentIndex - 1];
-  const next = DOCTRINES[currentIndex + 1];
+  const currentIndex = doctrines.findIndex((d) => d.slug === slug);
+  const prev = doctrines[currentIndex - 1];
+  const next = doctrines[currentIndex + 1];
 
   return (
     <div style={{ paddingTop: '6rem' }}>

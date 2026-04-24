@@ -1,14 +1,19 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { APOLOGETICS_QUESTIONS, APOLOGETICS_CATEGORIES } from '@/lib/data';
+import { getApologeticsQuestions, getApologeticsCategories } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'Apologetics — ChristCornerstone',
+  title: 'Apologetics',
   description: 'Structured answers to the hardest questions about Christianity — from philosophy to history to science.',
 };
 
-export default function ApologeticsPage() {
+export default async function ApologeticsPage() {
+  const [questions, categories] = await Promise.all([
+    getApologeticsQuestions(),
+    getApologeticsCategories(),
+  ]);
+
   return (
     <div style={{ paddingTop: '6rem' }}>
       {/* Header */}
@@ -41,7 +46,7 @@ export default function ApologeticsPage() {
           <div className="max-w-5xl mx-auto">
             <span className="section-label">Browse by Category</span>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-              {APOLOGETICS_CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/apologetics/${cat.slug}`}
@@ -51,7 +56,7 @@ export default function ApologeticsPage() {
                     border: '1px solid rgba(201,168,76,0.1)',
                   }}
                 >
-                  <span className="block text-3xl mb-3">{cat.icon}</span>
+                  <span className="block text-3xl mb-3" aria-hidden="true">{cat.icon}</span>
                   <p className="font-cinzel text-gold tracking-[0.12em] uppercase mb-2" style={{ fontSize: '0.82rem' }}>
                     {cat.title}
                   </p>
@@ -71,8 +76,8 @@ export default function ApologeticsPage() {
           <span className="section-label">All Questions</span>
           <h2 className="section-title mb-10">The Hard Questions</h2>
           <div className="space-y-4">
-            {APOLOGETICS_QUESTIONS.map((q) => (
-              <div
+            {questions.map((q) => (
+              <article
                 key={q.id}
                 className="rounded-2xl overflow-hidden"
                 style={{ background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.08)' }}
@@ -84,7 +89,7 @@ export default function ApologeticsPage() {
                         className="font-cinzel tracking-[0.2em] uppercase text-gold-dim block mb-2"
                         style={{ fontSize: '0.68rem' }}
                       >
-                        {APOLOGETICS_CATEGORIES.find((c) => c.slug === q.category)?.title || q.category}
+                        {categories.find((c) => c.slug === q.category)?.title || q.category}
                       </span>
                       <h3 className="font-cormorant text-cream" style={{ fontSize: '1.3rem', fontWeight: 600 }}>
                         {q.question}
@@ -101,7 +106,7 @@ export default function ApologeticsPage() {
                     <strong className="text-gold-dim">Go Deeper:</strong> {q.go_deeper}
                   </p>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </AnimateOnScroll>

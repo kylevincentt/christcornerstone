@@ -1,9 +1,13 @@
 'use client';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { RELIGIONS } from '@/lib/data';
+import type { Religion } from '@/types';
 
-export default function ReligionsSection() {
+interface Props {
+  religions: Religion[];
+}
+
+export default function ReligionsSection({ religions }: Props) {
   return (
     <section
       id="religions"
@@ -22,7 +26,7 @@ export default function ReligionsSection() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-            {RELIGIONS.map((religion) => (
+            {religions.map((religion) => (
               <Link
                 key={religion.id}
                 href={`/religions/${religion.slug}`}
@@ -40,7 +44,6 @@ export default function ReligionsSection() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                {/* Header */}
                 <div
                   className="flex items-center gap-4 px-7 py-5"
                   style={{ borderBottom: '1px solid rgba(201,168,76,0.07)' }}
@@ -56,7 +59,6 @@ export default function ReligionsSection() {
                   </div>
                 </div>
 
-                {/* Body */}
                 <div className="px-7 py-5">
                   <p className="text-text-light leading-relaxed mb-4" style={{ fontSize: '0.95rem' }}>
                     {religion.description}

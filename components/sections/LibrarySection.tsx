@@ -1,8 +1,11 @@
 'use client';
 import { useState } from 'react';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { LIBRARY_ITEMS } from '@/lib/data';
 import type { LibraryItem } from '@/types';
+
+interface Props {
+  items: LibraryItem[];
+}
 
 const TABS: { key: LibraryItem['tab']; label: string }[] = [
   { key: 'bibles', label: 'Bibles Online' },
@@ -11,10 +14,10 @@ const TABS: { key: LibraryItem['tab']; label: string }[] = [
   { key: 'media', label: 'Video & Podcast' },
 ];
 
-export default function LibrarySection() {
+export default function LibrarySection({ items }: Props) {
   const [activeTab, setActiveTab] = useState<LibraryItem['tab']>('bibles');
 
-  const items = LIBRARY_ITEMS.filter((item) => item.tab === activeTab);
+  const visibleItems = items.filter((item) => item.tab === activeTab);
 
   return (
     <section
@@ -30,7 +33,6 @@ export default function LibrarySection() {
             Trusted tools, theologians, and materials — carefully selected to deepen your walk with God.
           </p>
 
-          {/* Tabs */}
           <div
             className="flex gap-0 mt-8 mb-6 flex-wrap"
             style={{ borderBottom: '1px solid rgba(201,168,76,0.15)' }}
@@ -51,11 +53,10 @@ export default function LibrarySection() {
                 {tab.label}
               </button>
             ))}
-          </div>
+        </div>
 
-          {/* Items */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <a
                 key={item.id}
                 href={item.url}

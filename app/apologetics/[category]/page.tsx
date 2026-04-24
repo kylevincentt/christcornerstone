@@ -1,19 +1,24 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { APOLOGETICS_QUESTIONS, APOLOGETICS_CATEGORIES } from '@/lib/data';
+import {
+  getApologeticsQuestions,
+  getApologeticsCategories,
+  getApologeticsCategoryBySlug,
+} from '@/lib/content';
 
 interface Props {
   params: Promise<{ category: string }>;
 }
 
 export async function generateStaticParams() {
-  return APOLOGETICS_CATEGORIES.map((c) => ({ category: c.slug }));
+  const cats = await getApologeticsCategories();
+  return cats.map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params;
-  const cat = APOLOGETICS_CATEGORIES.find((c) => c.slug === category);
+  const cat = await getApologeticsCategoryBySlug(category);
   if (!cat) return { title: 'Category Not Found' };
   return {
     title: `${cat.title} Apologetics`,
@@ -24,10 +29,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ApologeticsCategoryPage({ params }: Props) {
   const { category } = await params;
-  const cat = APOLOGETICS_CATEGORIES.find((c) => c.slug === category);
+  const [cat, allQuestions, allCats] = await Promise.all([
+    getApologeticsCategoryBySlug(category),
+    getApologeticsQuestions(),
+    getApologeticsCategories(),
+  ]);
   if (!cat) notFound();
 
-  const questions = APOLOGETICS_QUESTIONS.filter((q) => q.category === category);
+  const questions = allQuestions.filter((q) => q.category === category);
 
   return (
     <div style={{ paddingTop: '6rem' }}>
@@ -111,7 +120,7 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
             Other Categories
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {APOLOGETICS_CATEGORIES.filter((c) => c.slug !== category).map((c) => (
+            {allCats.filter((c) => c.slug !== category).map((c) => (
               <Link
                 key={c.id}
                 href={`/apologetics/${c.slug}`}

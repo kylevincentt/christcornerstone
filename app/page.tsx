@@ -5,10 +5,27 @@ import ScriptureSection from '@/components/sections/ScriptureSection';
 import LibrarySection from '@/components/sections/LibrarySection';
 import ReligionsSection from '@/components/sections/ReligionsSection';
 import QuotesSection from '@/components/sections/QuotesSection';
-import { getDailyVerse } from '@/lib/data';
+import {
+  getDailyVerse,
+  getDoctrines,
+  getApologeticsQuestions,
+  getApologeticsCategories,
+  getReligions,
+  getQuotes,
+  getLibraryItems,
+} from '@/lib/content';
 
-export default function HomePage() {
-  const verse = getDailyVerse();
+export default async function HomePage() {
+  // Fetch everything in parallel — they're independent.
+  const [verse, doctrines, apoloQs, apoloCats, religions, quotes, library] = await Promise.all([
+    getDailyVerse(),
+    getDoctrines(),
+    getApologeticsQuestions(),
+    getApologeticsCategories(),
+    getReligions(),
+    getQuotes(),
+    getLibraryItems(),
+  ]);
 
   return (
     <>
@@ -34,12 +51,12 @@ export default function HomePage() {
         <p className="font-cinzel text-[0.8rem] tracking-[0.25em] uppercase text-gold-dim">— C.S. Lewis</p>
       </div>
 
-      <DoctrineSection />
-      <ApologeticsSection />
+      <DoctrineSection doctrines={doctrines} />
+      <ApologeticsSection questions={apoloQs} categories={apoloCats} />
       <ScriptureSection />
-      <LibrarySection />
-      <ReligionsSection />
-      <QuotesSection />
+      <LibrarySection items={library} />
+      <ReligionsSection religions={religions} />
+      <QuotesSection quotes={quotes} />
     </>
   );
 }

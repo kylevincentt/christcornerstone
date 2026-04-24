@@ -2,11 +2,16 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import { APOLOGETICS_QUESTIONS, APOLOGETICS_CATEGORIES } from '@/lib/data';
+import type { ApologeticsQuestion, ApologeticsCategory } from '@/types';
 
-export default function ApologeticsSection() {
+interface Props {
+  questions: ApologeticsQuestion[];
+  categories: ApologeticsCategory[];
+}
+
+export default function ApologeticsSection({ questions, categories }: Props) {
   const [openId, setOpenId] = useState<string | null>(null);
-  const featured = APOLOGETICS_QUESTIONS.slice(0, 4);
+  const featured = questions.slice(0, 4);
 
   return (
     <section
@@ -18,7 +23,6 @@ export default function ApologeticsSection() {
         borderBottom: '1px solid rgba(201,168,76,0.1)',
       }}
     >
-      {/* Decorative glow */}
       <div
         className="absolute right-[-100px] top-[-100px] pointer-events-none"
         style={{
@@ -41,7 +45,6 @@ export default function ApologeticsSection() {
             <div className="ornament-diamond" />
           </div>
 
-          {/* Accordion */}
           <ul className="list-none" role="list">
             {featured.map((q) => {
               const isOpen = openId === q.id;
@@ -114,7 +117,6 @@ export default function ApologeticsSection() {
           </div>
         </AnimateOnScroll>
 
-        {/* Category cards */}
         <AnimateOnScroll delay={200}>
           <span className="section-label">Browse by Category</span>
           <h3 className="font-cormorant font-light text-cream mb-2" style={{ fontSize: '2rem' }}>
@@ -124,7 +126,7 @@ export default function ApologeticsSection() {
             Choose a category to explore structured defenses of the Christian faith.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {APOLOGETICS_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <Link
                 key={cat.id}
                 href={`/apologetics/${cat.slug}`}

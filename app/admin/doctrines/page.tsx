@@ -1,150 +1,248 @@
 'use client';
 import { useState } from 'react';
-import { DOCTRINES } from '@/lib/data';
+import { useAdminContent } from '@/components/admin/useAdminContent';
+import {
+  FieldLabel,
+  TextInput,
+  TextArea,
+  NumberInput,
+  PrimaryButton,
+  GhostButton,
+  DangerGhostButton,
+  SaveBanner,
+  ErrorBanner,
+  LoadingState,
+  EmptyState,
+} from '@/components/admin/FormFields';
+import MarkdownEditor from '@/components/admin/MarkdownEditor';
 import type { Doctrine } from '@/types';
 
-const FIELD_STYLE = {
-  background: 'var(--deep-navy)',
-  border: '1px solid rgba(201,168,76,0.2)',
-  borderRadius: '8px',
-  color: 'var(--cream)',
-  padding: '0.7rem 1rem',
-  fontSize: '0.95rem',
-  width: '100%',
-  outline: 'none',
-  fontFamily: 'Lato, sans-serif',
+const EMPTY_DOCTRINE: Doctrine = {
+  id: '',
+  slug: '',
+  tag: '',
+  name: '',
+  verse: '',
+  description: '',
+  hover_verse_text: '',
+  hover_verse_citation: '',
+  full_content: '',
+  sort_order: 0,
 };
 
-function DoctrineEditor({ doctrine, onSave, onCancel }: { doctrine: Doctrine; onSave: (d: Doctrine) => void; onCancel: () => void }) {
+function DoctrineEditor({
+  doctrine,
+  onSave,
+  onCancel,
+  onDelete,
+  isNew,
+}: {
+  doctrine: Doctrine;
+  onSave: (d: Doctrine) => Promise<boolean>;
+  onCancel: () => void;
+  onDelete?: () => Promise<boolean>;
+  isNew?: boolean;
+}) {
   const [form, setForm] = useState(doctrine);
-  const set = (key: keyof Doctrine, val: string | number) => setForm((f) => ({ ...f, [key]: val }));
+  const set = <K extends keyof Doctrine>(key: K, val: Doctrine[K]) =>
+    setForm((f) => ({ ...f, [key]: val }));
+  const [saving, setSaving] = useState(false);
 
   return (
-    <div className="space-y-4 p-6 rounded-2xl" style={{ background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.15)' }}>
-      <div className="grid grid-cols-2 gap-4">
+    <div
+      className="space-y-4 p-6 rounded-2xl"
+      style={{ background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.15)' }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase block mb-1">Tag / Category</label>
-          <input style={FIELD_STYLE} value={form.tag} onChange={(e) => set('tag', e.target.value)} />
+          <FieldLabel>Slug (URL part)</FieldLabel>
+          <TextInput value={form.slug} onChange={(v) => set('slug', v)} placeholder="trinity" />
         </div>
         <div>
-          <label className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase block mb-1">Name</label>
-          <input style={FIELD_STYLE} value={form.name} onChange={(e) => set('name', e.target.value)} />
+          <FieldLabel>Sort Order</FieldLabel>
+          <NumberInput value={form.sort_order} onChange={(v) => set('sort_order', v)} />
         </div>
       </div>
-      <div>
-        <label className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase block mb-1">Key Verse (short)</label>
-        <input style={FIELD_STYLE} value={form.verse} onChange={(e) => set('verse', e.target.value)} />
-      </div>
-      <div>
-        <label className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase block mb-1">Summary Description</label>
-        <textarea style={{ ...FIELD_STYLE, resize: 'vertical', minHeight: '80px' }} value={form.description} onChange={(e) => set('description', e.target.value)} />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase block mb-1">Hover Verse Text</label>
-          <textarea style={{ ...FIELD_STYLE, resize: 'vertical', minHeight: '80px' }} value={form.hover_verse_text} onChange={(e) => set('hover_verse_text', e.target.value)} />
+          <FieldLabel>Tag / Category</FieldLabel>
+          <TextInput value={form.tag} onChange={(v) => set('tag', v)} placeholder="Theology Proper" />
         </div>
         <div>
-          <label className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase block mb-1">Hover Verse Citation</label>
-          <input style={FIELD_STYLE} value={form.hover_verse_citation} onChange={(e) => set('hover_verse_citation', e.target.value)} />
+          <FieldLabel>Name</FieldLabel>
+          <TextInput value={form.name} onChange={(v) => set('name', v)} placeholder="The Trinity" />
         </div>
       </div>
       <div>
-        <label className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase block mb-1">
-          Full Article Content (use **Heading** for section headers, **bold** for emphasis)
-        </label>
-        <textarea
-          style={{ ...FIELD_STYLE, resize: 'vertical', minHeight: '300px', fontFamily: 'monospace', fontSize: '0.85rem' }}
-          value={form.full_content || ''}
-          onChange={(e) => set('full_content', e.target.value)}
+        <FieldLabel>Card Verse (short)</FieldLabel>
+        <TextInput
+          value={form.verse}
+          onChange={(v) => set('verse', v)}
+          placeholder='"Go and make disciples…" — Matt 28:19'
         />
       </div>
-      <div className="flex gap-3 justify-end">
-        <button
-          onClick={onCancel}
-          className="font-cinzel tracking-[0.12em] uppercase text-text-muted px-5 py-2 rounded-lg transition-colors hover:text-cream"
-          style={{ fontSize: '0.75rem', background: 'none', border: 'none', cursor: 'pointer' }}
+      <div>
+        <FieldLabel>Summary Description</FieldLabel>
+        <TextArea
+          value={form.description}
+          onChange={(v) => set('description', v)}
+          placeholder="One short sentence describing the doctrine."
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <FieldLabel>Hover Verse Text</FieldLabel>
+          <TextArea
+            value={form.hover_verse_text}
+            onChange={(v) => set('hover_verse_text', v)}
+            placeholder='"The grace of the Lord Jesus Christ…"'
+          />
+        </div>
+        <div>
+          <FieldLabel>Hover Verse Citation</FieldLabel>
+          <TextInput
+            value={form.hover_verse_citation}
+            onChange={(v) => set('hover_verse_citation', v)}
+            placeholder="2 Corinthians 13:14"
+          />
+        </div>
+      </div>
+      <div>
+        <FieldLabel>Full Article Content (Markdown)</FieldLabel>
+        <MarkdownEditor
+          value={form.full_content || ''}
+          onChange={(v) => set('full_content', v)}
+        />
+      </div>
+
+      <div className="flex flex-wrap gap-3 justify-end items-center pt-4">
+        {!isNew && onDelete && (
+          <div className="mr-auto">
+            <DangerGhostButton
+              onClick={async () => {
+                if (!confirm(`Delete "${doctrine.name}"? This cannot be undone.`)) return;
+                await onDelete();
+              }}
+            >
+              Delete
+            </DangerGhostButton>
+          </div>
+        )}
+        <GhostButton onClick={onCancel}>Cancel</GhostButton>
+        <PrimaryButton
+          disabled={saving || !form.slug || !form.name}
+          onClick={async () => {
+            setSaving(true);
+            const ok = await onSave(form);
+            setSaving(false);
+            if (ok) onCancel();
+          }}
         >
-          Cancel
-        </button>
-        <button
-          onClick={() => onSave(form)}
-          className="font-cinzel tracking-[0.12em] uppercase text-midnight bg-gold px-6 py-2 rounded-lg transition-colors hover:bg-gold-light"
-          style={{ fontSize: '0.75rem', border: 'none', cursor: 'pointer' }}
-        >
-          Save Doctrine
-        </button>
+          {saving ? 'Saving…' : isNew ? 'Create Doctrine' : 'Save Doctrine'}
+        </PrimaryButton>
       </div>
     </div>
   );
 }
 
 export default function AdminDoctrinesPage() {
-  const [doctrines, setDoctrines] = useState<Doctrine[]>(DOCTRINES);
+  const { items, loading, error, saved, save, remove } =
+    useAdminContent<Doctrine>('doctrines');
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
-
-  const handleSave = async (updated: Doctrine) => {
-    setDoctrines((prev) => prev.map((d) => (d.id === updated.id ? updated : d)));
-    setEditingId(null);
-    setSaved(updated.id);
-    setTimeout(() => setSaved(null), 3000);
-
-    // Save to Supabase if configured
-    try {
-      await fetch('/api/admin/content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'doctrine', item: updated }),
-      });
-    } catch (e) {
-      console.error('Save error:', e);
-    }
-  };
+  const [creating, setCreating] = useState(false);
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="font-cormorant text-cream" style={{ fontSize: '2.2rem', fontWeight: 300 }}>Doctrines</h1>
-          <p className="text-text-muted mt-1" style={{ fontSize: '0.9rem' }}>Edit doctrine cards and full article content.</p>
+          <h1 className="font-cormorant text-cream" style={{ fontSize: '2.2rem', fontWeight: 300 }}>
+            Doctrines
+          </h1>
+          <p className="text-text-muted mt-1" style={{ fontSize: '0.9rem' }}>
+            Edit doctrine cards and full article content. Changes appear on the site instantly.
+          </p>
         </div>
+        {!creating && (
+          <PrimaryButton onClick={() => setCreating(true)}>+ New Doctrine</PrimaryButton>
+        )}
       </div>
 
-      {saved && (
-        <div className="mb-4 p-4 rounded-xl text-sm" style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', color: 'var(--gold)' }}>
-          ✓ Changes saved successfully
+      <SaveBanner message={saved} />
+      <ErrorBanner message={error} />
+
+      {creating && (
+        <div className="mb-6">
+          <DoctrineEditor
+            isNew
+            doctrine={{
+              ...EMPTY_DOCTRINE,
+              id: `d-${Date.now()}`,
+              sort_order: items.length + 1,
+            }}
+            onSave={async (d) => save(d, 'Doctrine created')}
+            onCancel={() => setCreating(false)}
+          />
         </div>
       )}
 
-      <div className="space-y-3">
-        {doctrines.map((doctrine) => (
-          <div key={doctrine.id}>
-            {editingId === doctrine.id ? (
-              <DoctrineEditor
-                doctrine={doctrine}
-                onSave={handleSave}
-                onCancel={() => setEditingId(null)}
-              />
-            ) : (
-              <div
-                className="flex items-center justify-between p-5 rounded-xl cursor-pointer transition-all hover:-translate-y-0.5"
-                style={{ background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.08)' }}
-                onClick={() => setEditingId(doctrine.id)}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.08)')}
-              >
-                <div>
-                  <span className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase">{doctrine.tag}</span>
-                  <h3 className="font-cormorant text-cream mt-0.5" style={{ fontSize: '1.3rem' }}>{doctrine.name}</h3>
-                  <p className="text-text-muted mt-1" style={{ fontSize: '0.85rem' }}>{doctrine.description.slice(0, 80)}…</p>
-                </div>
-                <span className="font-cinzel text-gold-dim text-xs tracking-widest uppercase ml-4 flex-shrink-0">Edit →</span>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <LoadingState />
+      ) : items.length === 0 && !creating ? (
+        <EmptyState
+          title="No doctrines yet"
+          hint="Run npm run db:setup to seed initial content, or click + New Doctrine."
+        />
+      ) : (
+        <div className="space-y-3">
+          {items.map((doctrine) => (
+            <div key={doctrine.id}>
+              {editingId === doctrine.id ? (
+                <DoctrineEditor
+                  doctrine={doctrine}
+                  onSave={async (d) => save(d, 'Doctrine saved')}
+                  onCancel={() => setEditingId(null)}
+                  onDelete={async () => {
+                    const ok = await remove(doctrine.id);
+                    if (ok) setEditingId(null);
+                    return ok;
+                  }}
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setEditingId(doctrine.id)}
+                  className="w-full text-left flex items-center justify-between p-5 rounded-xl cursor-pointer transition-all hover:-translate-y-0.5"
+                  style={{
+                    background: 'var(--deep-navy)',
+                    border: '1px solid rgba(201,168,76,0.08)',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.08)')}
+                >
+                  <div>
+                    <span className="font-cinzel text-gold-dim text-[0.65rem] tracking-[0.2em] uppercase">
+                      {doctrine.tag}
+                    </span>
+                    <h3
+                      className="font-cormorant text-cream mt-0.5"
+                      style={{ fontSize: '1.3rem' }}
+                    >
+                      {doctrine.name}
+                    </h3>
+                    <p className="text-text-muted mt-1" style={{ fontSize: '0.85rem' }}>
+                      {doctrine.description.slice(0, 100)}
+                      {doctrine.description.length > 100 ? '…' : ''}
+                    </p>
+                  </div>
+                  <span className="font-cinzel text-gold-dim text-xs tracking-widest uppercase ml-4 flex-shrink-0">
+                    Edit →
+                  </span>
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
