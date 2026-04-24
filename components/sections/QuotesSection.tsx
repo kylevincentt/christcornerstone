@@ -31,21 +31,25 @@ export default function QuotesSection() {
         </AnimateOnScroll>
       </div>
 
-      {/* Scrollable track */}
+      {/* Scrollable track — horizontal on all breakpoints */}
       <div className="relative">
-        {/* Fade edges */}
+        {/* Fade edges (desktop only — avoid clipping cards on narrow screens) */}
         <div
-          className="absolute top-0 bottom-0 left-0 w-24 pointer-events-none z-10"
+          className="hidden md:block absolute top-0 bottom-0 left-0 w-24 pointer-events-none z-10"
           style={{ background: 'linear-gradient(to right, var(--deep-navy), transparent)' }}
+          aria-hidden="true"
         />
         <div
-          className="absolute top-0 bottom-0 right-0 w-24 pointer-events-none z-10"
+          className="hidden md:block absolute top-0 bottom-0 right-0 w-24 pointer-events-none z-10"
           style={{ background: 'linear-gradient(to left, var(--deep-navy), transparent)' }}
+          aria-hidden="true"
         />
 
         <div
           ref={trackRef}
-          className="flex flex-col md:flex-row md:overflow-x-auto gap-6 px-4 md:px-16 pb-2 md:cursor-grab md:active:cursor-grabbing"
+          role="region"
+          aria-label="Christian quotes carousel"
+          className="flex overflow-x-auto gap-6 px-4 md:px-16 pb-2 cursor-grab active:cursor-grabbing snap-x"
           style={{
             scrollSnapType: 'x mandatory',
             scrollBehavior: 'smooth',
@@ -53,11 +57,11 @@ export default function QuotesSection() {
           }}
         >
           {QUOTES.map((quote) => (
-            <div
+            <article
               key={quote.id}
-              className="flex-none max-w-full md:max-w-none rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
+              className="flex-none rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
               style={{
-                width: '360px',
+                width: 'min(360px, 85vw)',
                 background: 'var(--navy)',
                 border: '1px solid rgba(201,168,76,0.1)',
                 padding: '2rem 2rem 1.6rem',
@@ -69,6 +73,7 @@ export default function QuotesSection() {
               <span
                 className="font-cormorant block"
                 style={{ fontSize: '5rem', lineHeight: 0.8, color: 'rgba(201,168,76,0.18)', marginBottom: '0.8rem' }}
+                aria-hidden="true"
               >
                 &ldquo;
               </span>
@@ -80,6 +85,7 @@ export default function QuotesSection() {
                 style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}
               >
                 <div
+                  aria-hidden="true"
                   className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-base"
                   style={{
                     background: 'rgba(201,168,76,0.12)',
@@ -97,35 +103,55 @@ export default function QuotesSection() {
                   </p>
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
 
-      {/* Nav buttons */}
+      {/* Nav buttons — now work on every breakpoint because track is horizontal */}
       <div className="flex justify-center gap-3 mt-10">
-        {['←', '→'].map((dir, i) => (
-          <button
-            key={dir}
-            onClick={() => scroll(i === 0 ? 'left' : 'right')}
-            className="flex items-center justify-center w-11 h-11 rounded-full cursor-pointer transition-all duration-300 text-lg"
-            style={{
-              background: 'none',
-              border: '1px solid rgba(201,168,76,0.25)',
-              color: 'var(--gold)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(201,168,76,0.1)';
-              e.currentTarget.style.borderColor = 'var(--gold)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'none';
-              e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)';
-            }}
-          >
-            {dir}
-          </button>
-        ))}
+        <button
+          type="button"
+          aria-label="Scroll to previous quotes"
+          onClick={() => scroll('left')}
+          className="flex items-center justify-center w-11 h-11 rounded-full cursor-pointer transition-all duration-300 text-lg"
+          style={{
+            background: 'none',
+            border: '1px solid rgba(201,168,76,0.25)',
+            color: 'var(--gold)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(201,168,76,0.1)';
+            e.currentTarget.style.borderColor = 'var(--gold)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'none';
+            e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)';
+          }}
+        >
+          <span aria-hidden="true">←</span>
+        </button>
+        <button
+          type="button"
+          aria-label="Scroll to next quotes"
+          onClick={() => scroll('right')}
+          className="flex items-center justify-center w-11 h-11 rounded-full cursor-pointer transition-all duration-300 text-lg"
+          style={{
+            background: 'none',
+            border: '1px solid rgba(201,168,76,0.25)',
+            color: 'var(--gold)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(201,168,76,0.1)';
+            e.currentTarget.style.borderColor = 'var(--gold)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'none';
+            e.currentTarget.style.borderColor = 'rgba(201,168,76,0.25)';
+          }}
+        >
+          <span aria-hidden="true">→</span>
+        </button>
       </div>
     </section>
   );
