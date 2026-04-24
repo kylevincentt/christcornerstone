@@ -3,12 +3,17 @@ import EmailSignup from './EmailSignup';
 
 export default function Footer() {
   return (
-    <footer style={{ background: '#06080f', borderTop: '1px solid rgba(201,168,76,0.12)' }} className="px-4 sm:px-8 lg:px-16 pt-12 pb-8">
+    <footer
+      style={{
+        background: 'var(--footer-bg)',
+        borderTop: '1px solid rgba(var(--gold-rgb), 0.12)',
+      }}
+      className="px-4 sm:px-8 lg:px-16 pt-12 pb-8"
+    >
       <div className="max-w-6xl mx-auto">
-        {/* Email signup banner */}
         <div
           className="rounded-2xl p-10 mb-12 text-center"
-          style={{ background: 'rgba(201,168,76,0.04)', border: '1px solid rgba(201,168,76,0.12)' }}
+          style={{ background: 'rgba(var(--gold-rgb), 0.04)', border: '1px solid rgba(var(--gold-rgb), 0.12)' }}
         >
           <span className="section-label block mb-3">Daily Verse & Study Material</span>
           <h3 className="font-cormorant text-3xl font-light text-cream mb-2">
@@ -20,7 +25,6 @@ export default function Footer() {
           <EmailSignup />
         </div>
 
-        {/* Footer grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-8">
           <div className="md:col-span-2">
             <p className="font-cinzel text-gold text-lg tracking-[0.15em] mb-4">CHRISTCORNERSTONE</p>
@@ -70,7 +74,7 @@ export default function Footer() {
 
         <div
           className="flex flex-col md:flex-row justify-between items-center gap-4 pt-6 max-w-6xl mx-auto"
-          style={{ borderTop: '1px solid rgba(201,168,76,0.08)' }}
+          style={{ borderTop: '1px solid rgba(var(--gold-rgb), 0.08)' }}
         >
           <p className="text-text-muted text-sm">
             © {new Date().getFullYear()} ChristCornerstone.org — Built with purpose and care.
