@@ -26,6 +26,7 @@ export default function ApologeticsSection() {
           height: '500px',
           background: 'radial-gradient(ellipse, rgba(201,168,76,0.04) 0%, transparent 70%)',
         }}
+        aria-hidden="true"
       />
 
       <div className="max-w-3xl mx-auto flex flex-col gap-16">
@@ -41,51 +42,65 @@ export default function ApologeticsSection() {
           </div>
 
           {/* Accordion */}
-          <ul className="list-none">
-            {featured.map((q) => (
-              <li
-                key={q.id}
-                style={{ borderBottom: '1px solid rgba(201,168,76,0.08)' }}
-              >
-                <button
-                  className="w-full bg-transparent border-none py-5 flex items-center justify-between cursor-pointer text-left gap-4 transition-colors duration-300"
-                  style={{ color: openId === q.id ? 'var(--cream)' : 'var(--text-light)' }}
-                  onClick={() => setOpenId(openId === q.id ? null : q.id)}
+          <ul className="list-none" role="list">
+            {featured.map((q) => {
+              const isOpen = openId === q.id;
+              const panelId = `apolo-panel-${q.id}`;
+              const buttonId = `apolo-button-${q.id}`;
+              return (
+                <li
+                  key={q.id}
+                  style={{ borderBottom: '1px solid rgba(201,168,76,0.08)' }}
                 >
-                  <span className="font-cormorant" style={{ fontSize: '1.3rem' }}>{q.question}</span>
-                  <span
-                    className="flex-shrink-0 transition-transform duration-300"
+                  <button
+                    id={buttonId}
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
+                    className="w-full bg-transparent border-none py-5 flex items-center justify-between cursor-pointer text-left gap-4 transition-colors duration-300"
+                    style={{ color: isOpen ? 'var(--cream)' : 'var(--text-light)' }}
+                    onClick={() => setOpenId(isOpen ? null : q.id)}
+                  >
+                    <span className="font-cormorant" style={{ fontSize: '1.3rem' }}>{q.question}</span>
+                    <span
+                      aria-hidden="true"
+                      className="flex-shrink-0 transition-transform duration-300"
+                      style={{
+                        color: isOpen ? 'var(--gold)' : 'var(--gold-dim)',
+                        transform: isOpen ? 'rotate(45deg)' : 'none',
+                        fontSize: '1.4rem',
+                        fontFamily: 'Lato, sans-serif',
+                      }}
+                    >
+                      +
+                    </span>
+                  </button>
+                  <div
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={buttonId}
+                    hidden={!isOpen}
                     style={{
-                      color: openId === q.id ? 'var(--gold)' : 'var(--gold-dim)',
-                      transform: openId === q.id ? 'rotate(45deg)' : 'none',
-                      fontSize: '1.4rem',
-                      fontFamily: 'Lato, sans-serif',
+                      maxHeight: isOpen ? '600px' : '0',
+                      overflow: 'hidden',
+                      transition: 'max-height 0.4s ease',
                     }}
                   >
-                    +
-                  </span>
-                </button>
-                <div
-                  style={{
-                    maxHeight: openId === q.id ? '400px' : '0',
-                    overflow: 'hidden',
-                    transition: 'max-height 0.4s ease',
-                  }}
-                >
-                  <div className="pb-6">
-                    <p className="text-text-muted leading-relaxed mb-3" style={{ fontSize: '1rem' }}>
-                      <strong className="text-gold-light font-semibold">The Objection:</strong> {q.objection}
-                    </p>
-                    <p className="text-text-muted leading-relaxed mb-3" style={{ fontSize: '1rem' }}>
-                      <strong className="text-gold-light font-semibold">The Response:</strong> {q.response}
-                    </p>
-                    <p className="text-text-muted leading-relaxed" style={{ fontSize: '1rem' }}>
-                      <strong className="text-gold-light font-semibold">Go Deeper:</strong> {q.go_deeper}
-                    </p>
+                    <div className="pb-6">
+                      <p className="text-text-muted leading-relaxed mb-3" style={{ fontSize: '1rem' }}>
+                        <strong className="text-gold-light font-semibold">The Objection:</strong> {q.objection}
+                      </p>
+                      <p className="text-text-muted leading-relaxed mb-3" style={{ fontSize: '1rem' }}>
+                        <strong className="text-gold-light font-semibold">The Response:</strong> {q.response}
+                      </p>
+                      <p className="text-text-muted leading-relaxed" style={{ fontSize: '1rem' }}>
+                        <strong className="text-gold-light font-semibold">Go Deeper:</strong> {q.go_deeper}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
 
           <div className="mt-6">
@@ -113,7 +128,7 @@ export default function ApologeticsSection() {
               <Link
                 key={cat.id}
                 href={`/apologetics/${cat.slug}`}
-                className="block no-underline rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5"
+                className="hover-gold-bg-sm block no-underline rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5"
                 style={{
                   background: cat.slug === 'quick'
                     ? 'rgba(201,168,76,0.08)'
@@ -122,10 +137,8 @@ export default function ApologeticsSection() {
                     ? '1px solid rgba(201,168,76,0.2)'
                     : '1px solid rgba(201,168,76,0.1)',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(201,168,76,0.09)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = cat.slug === 'quick' ? 'rgba(201,168,76,0.08)' : 'rgba(201,168,76,0.04)')}
               >
-                <span className="block text-2xl mb-2">{cat.icon}</span>
+                <span className="block text-2xl mb-2" aria-hidden="true">{cat.icon}</span>
                 <p className="font-cinzel text-gold tracking-[0.12em] uppercase mb-1" style={{ fontSize: '0.82rem' }}>
                   {cat.title}
                 </p>
