@@ -8,17 +8,19 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Colors reference CSS custom properties so they follow the active theme
+      // (see app/globals.css :root for dark, [data-theme="light"] for light).
       colors: {
-        midnight: '#0a0e1a',
-        'deep-navy': '#0f1628',
-        navy: '#141d35',
-        gold: '#c9a84c',
-        'gold-light': '#e2c47a',
-        'gold-dim': '#8a6e2f',
-        cream: '#f5efe0',
-        'cream-dark': '#e8dfc8',
-        'text-light': '#d4c9b0',
-        'text-muted': '#7a7060',
+        midnight: 'var(--midnight)',
+        'deep-navy': 'var(--deep-navy)',
+        navy: 'var(--navy)',
+        gold: 'var(--gold)',
+        'gold-light': 'var(--gold-light)',
+        'gold-dim': 'var(--gold-dim)',
+        cream: 'var(--cream)',
+        'cream-dark': 'var(--cream-dark)',
+        'text-light': 'var(--text-light)',
+        'text-muted': 'var(--text-muted)',
       },
       fontFamily: {
         cormorant: ['Cormorant Garamond', 'serif'],
