@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import LibrarySection from '@/components/sections/LibrarySection';
+import { getLibraryItems } from '@/lib/content';
 
 export const metadata: Metadata = {
-  title: 'The Library — ChristCornerstone',
+  title: 'The Library',
   description: 'Trusted tools, theologians, Bibles, and media — carefully curated to deepen your walk with God.',
 };
 
-export default function LibraryPage() {
+export default async function LibraryPage() {
+  const items = await getLibraryItems();
   return (
     <div style={{ paddingTop: '6rem' }}>
       <div
@@ -28,9 +30,7 @@ export default function LibraryPage() {
           Trusted tools, theologians, and materials — carefully selected to deepen your walk with God.
         </p>
       </div>
-      <div style={{ paddingTop: '0' }}>
-        <LibrarySection />
-      </div>
+      <LibrarySection items={items} />
     </div>
   );
 }
