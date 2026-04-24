@@ -1,10 +1,27 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+const NAV_LINKS: ReadonlyArray<[string, string]> = [
+  ['Doctrine', '/doctrine'],
+  ['Apologetics', '/apologetics'],
+  ['Religions', '/religions'],
+  ['Scripture', '/scripture'],
+  ['Library', '/library'],
+  ['Quotes', '/quotes'],
+];
+
+function isActivePath(pathname: string | null, href: string): boolean {
+  if (!pathname) return false;
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -12,11 +29,28 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      const original = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = original;
+      };
+    }
+  }, [menuOpen]);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
     <>
       <nav
+        aria-label="Primary"
         className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-4 lg:px-16 py-5 transition-all duration-300"
         style={{
           background: scrolled
@@ -27,33 +61,41 @@ export default function Nav() {
         }}
       >
         {/* Logo */}
-        <Link href="/" className="font-cinzel text-gold text-xl font-semibold tracking-[0.15em] no-underline flex items-center gap-1">
-          CHRIST<span className="inline-block w-1.5 h-1.5 bg-gold rounded-full mx-1.5 mb-0.5 align-middle" />CORNERSTONE
+        <Link
+          href="/"
+          className="font-cinzel text-gold text-xl font-semibold tracking-[0.15em] no-underline flex items-center gap-1"
+          aria-label="ChristCornerstone home"
+        >
+          CHRIST<span className="inline-block w-1.5 h-1.5 bg-gold rounded-full mx-1.5 mb-0.5 align-middle" aria-hidden="true" />CORNERSTONE
         </Link>
 
         {/* Desktop Nav */}
         <ul className="hidden lg:flex gap-10 list-none items-center">
-          {[
-            ['Doctrine', '/doctrine'],
-            ['Apologetics', '/apologetics'],
-            ['Religions', '/religions'],
-            ['Scripture', '/scripture'],
-            ['Library', '/library'],
-            ['Quotes', '/quotes'],
-          ].map(([label, href]) => (
-            <li key={label}>
-              <Link
-                href={href}
-                className="font-cinzel text-sm font-normal tracking-[0.15em] text-text-light uppercase no-underline transition-colors duration-300 hover:text-gold relative group"
-              >
-                {label}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full" />
-              </Link>
-            </li>
-          ))}
+          {NAV_LINKS.map(([label, href]) => {
+            const active = isActivePath(pathname, href);
+            return (
+              <li key={label}>
+                <Link
+                  href={href}
+                  aria-current={active ? 'page' : undefined}
+                  className={
+                    'font-cinzel text-sm font-normal tracking-[0.15em] uppercase no-underline transition-colors duration-300 hover:text-gold relative group ' +
+                    (active ? 'text-gold' : 'text-text-light')
+                  }
+                >
+                  {label}
+                  <span
+                    className="absolute -bottom-1 left-0 h-px bg-gold transition-all duration-300 group-hover:w-full"
+                    style={{ width: active ? '100%' : '0' }}
+                  />
+                </Link>
+              </li>
+            );
+          })}
           <li>
             <Link
               href="/start-here"
+              aria-current={isActivePath(pathname, '/start-here') ? 'page' : undefined}
               className="font-cinzel text-[0.8rem] font-bold tracking-[0.15em] uppercase text-midnight bg-gold px-6 py-2.5 rounded-full no-underline transition-all duration-300 hover:bg-gold-light"
             >
               Start Here
@@ -65,7 +107,9 @@ export default function Nav() {
         <button
           className="lg:hidden flex flex-col gap-1.5 bg-transparent border-none cursor-pointer p-1 z-[200]"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
         >
           <span
             className="block w-6 h-0.5 bg-gold rounded transition-all duration-300 origin-center"
@@ -84,6 +128,10 @@ export default function Nav() {
 
       {/* Mobile Menu */}
       <div
+        id="mobile-menu"
+        role="dialog"
+        aria-modal={menuOpen || undefined}
+        aria-label="Mobile navigation"
         className="fixed inset-0 z-[150] flex flex-col items-center justify-center transition-opacity duration-300"
         style={{
           background: 'rgba(6,8,15,0.97)',
@@ -93,24 +141,23 @@ export default function Nav() {
         }}
       >
         <p className="font-cinzel text-gold text-xl tracking-[0.2em] mb-8">✦ CHRISTCORNERSTONE</p>
-        {[
-          ['Home', '/'],
-          ['Doctrine', '/doctrine'],
-          ['Apologetics', '/apologetics'],
-          ['Religions', '/religions'],
-          ['Scripture', '/scripture'],
-          ['Library', '/library'],
-          ['Quotes', '/quotes'],
-        ].map(([label, href]) => (
-          <Link
-            key={label}
-            href={href}
-            onClick={closeMenu}
-            className="font-cinzel text-2xl tracking-[0.18em] uppercase text-text-light no-underline py-5 px-8 transition-colors duration-300 hover:text-gold border-b border-[rgba(201,168,76,0.08)] w-full text-center max-w-sm first:border-t"
-          >
-            {label}
-          </Link>
-        ))}
+        {([['Home', '/'], ...NAV_LINKS] as ReadonlyArray<[string, string]>).map(([label, href]) => {
+          const active = isActivePath(pathname, href);
+          return (
+            <Link
+              key={label}
+              href={href}
+              onClick={closeMenu}
+              aria-current={active ? 'page' : undefined}
+              className={
+                'font-cinzel text-2xl tracking-[0.18em] uppercase no-underline py-5 px-8 transition-colors duration-300 hover:text-gold border-b border-[rgba(201,168,76,0.08)] w-full text-center max-w-sm first:border-t ' +
+                (active ? 'text-gold' : 'text-text-light')
+              }
+            >
+              {label}
+            </Link>
+          );
+        })}
         <Link
           href="/start-here"
           onClick={closeMenu}
