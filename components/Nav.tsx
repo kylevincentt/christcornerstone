@@ -11,6 +11,7 @@ const NAV_LINKS: ReadonlyArray<[string, string]> = [
   ['Scripture', '/scripture'],
   ['Library', '/library'],
   ['Quotes', '/quotes'],
+  ['Videos', '/videos'],
 ];
 
 function isActivePath(pathname: string | null, href: string): boolean {
