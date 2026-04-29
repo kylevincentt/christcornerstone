@@ -3,7 +3,7 @@ import { useState } from 'react';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { BIBLE_BOOKS } from '@/lib/data';
 
-export default function ScriptureSection() {
+export default function ScriptureSection({ hideHeader = false }: { hideHeader?: boolean } = {}) {
   const [search, setSearch] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -25,11 +25,15 @@ export default function ScriptureSection() {
     <section id="scripture" className="py-24 px-8 md:px-16">
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto text-center">
-          <span className="section-label">The Living Word</span>
-          <h2 className="section-title">Scripture Explorer</h2>
-          <p className="text-text-light leading-relaxed mt-3 mb-8 mx-auto" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
-            Search by topic, or browse the Bible book by book. Every book linked to trusted study resources.
-          </p>
+          {!hideHeader && (
+            <>
+              <span className="section-label">The Living Word</span>
+              <h2 className="section-title">Scripture Explorer</h2>
+              <p className="text-text-light leading-relaxed mt-3 mb-8 mx-auto" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
+                Search by topic, or browse the Bible book by book. Every book linked to trusted study resources.
+              </p>
+            </>
+          )}
 
           {/* Search */}
           <form onSubmit={handleSearch} className="relative max-w-lg mx-auto mb-8" role="search">

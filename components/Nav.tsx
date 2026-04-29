@@ -47,7 +47,7 @@ export default function Nav() {
     <>
       <nav
         aria-label="Primary"
-        className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-4 lg:px-16 py-5 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between gap-3 px-3 sm:px-4 lg:px-16 py-5 transition-all duration-300"
         style={{
           background: scrolled
             ? 'rgba(var(--page-bg), 0.98)'
@@ -56,8 +56,8 @@ export default function Nav() {
           backdropFilter: 'blur(8px)',
         }}
       >
-        <Link href="/" className="font-cinzel text-gold text-xl font-semibold tracking-[0.15em] no-underline flex items-center gap-1" aria-label="ChristCornerstone home">
-          CHRIST<span className="inline-block w-1.5 h-1.5 bg-gold rounded-full mx-1.5 mb-0.5 align-middle" aria-hidden="true" />CORNERSTONE
+        <Link href="/" className="font-cinzel text-gold font-semibold no-underline flex items-center gap-1 min-w-0 text-[0.95rem] tracking-[0.08em] sm:text-base sm:tracking-[0.12em] lg:text-xl lg:tracking-[0.15em] whitespace-nowrap" aria-label="ChristCornerstone home">
+          CHRIST<span className="inline-block w-1 h-1 sm:w-1.5 sm:h-1.5 bg-gold rounded-full mx-1 sm:mx-1.5 mb-0.5 align-middle" aria-hidden="true" />CORNERSTONE
         </Link>
 
         <ul className="hidden lg:flex gap-10 list-none items-center">
@@ -82,7 +82,7 @@ export default function Nav() {
           </li>
         </ul>
 
-        <div className="lg:hidden flex items-center gap-3">
+        <div className="lg:hidden flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <ThemeToggle />
           <button className="flex flex-col gap-1.5 bg-transparent border-none cursor-pointer p-1 z-[200]"
             onClick={() => setMenuOpen(!menuOpen)}

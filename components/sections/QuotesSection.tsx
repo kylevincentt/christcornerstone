@@ -5,9 +5,10 @@ import type { Quote } from '@/types';
 
 interface Props {
   quotes: Quote[];
+  hideHeader?: boolean;
 }
 
-export default function QuotesSection({ quotes }: Props) {
+export default function QuotesSection({ quotes, hideHeader = false }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: 'left' | 'right') => {
@@ -25,15 +26,17 @@ export default function QuotesSection({ quotes }: Props) {
         borderBottom: '1px solid rgba(201,168,76,0.1)',
       }}
     >
-      <div className="max-w-6xl mx-auto mb-12 px-8 md:px-16">
-        <AnimateOnScroll>
-          <span className="section-label">Voices Through the Ages</span>
-          <h2 className="section-title">Famous Christian Quotes</h2>
-          <p className="text-text-light leading-relaxed mt-3" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
-            Words of wisdom from saints, scholars, reformers, and seekers — across 2,000 years of Christian thought.
-          </p>
-        </AnimateOnScroll>
-      </div>
+      {!hideHeader && (
+        <div className="max-w-6xl mx-auto mb-12 px-8 md:px-16">
+          <AnimateOnScroll>
+            <span className="section-label">Voices Through the Ages</span>
+            <h2 className="section-title">Famous Christian Quotes</h2>
+            <p className="text-text-light leading-relaxed mt-3" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
+              Words of wisdom from saints, scholars, reformers, and seekers — across 2,000 years of Christian thought.
+            </p>
+          </AnimateOnScroll>
+        </div>
+      )}
 
       <div className="relative">
         <div

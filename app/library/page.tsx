@@ -30,7 +30,7 @@ export default async function LibraryPage() {
           Trusted tools, theologians, and materials — carefully selected to deepen your walk with God.
         </p>
       </div>
-      <LibrarySection items={items} />
+      <LibrarySection items={items} hideHeader />
     </div>
   );
 }

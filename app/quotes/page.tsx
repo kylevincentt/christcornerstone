@@ -30,7 +30,7 @@ export default async function QuotesPage() {
           Words of wisdom from saints, scholars, reformers, and seekers — across 2,000 years of Christian thought.
         </p>
       </div>
-      <QuotesSection quotes={quotes} />
+      <QuotesSection quotes={quotes} hideHeader />
     </div>
   );
 }

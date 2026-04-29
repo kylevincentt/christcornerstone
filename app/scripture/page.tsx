@@ -29,7 +29,7 @@ export default function ScripturePage() {
         </p>
       </div>
       <div style={{ borderTop: 'none' }}>
-        <ScriptureSection />
+        <ScriptureSection hideHeader />
       </div>
     </div>
   );
