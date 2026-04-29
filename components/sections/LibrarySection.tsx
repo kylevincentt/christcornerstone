@@ -5,6 +5,7 @@ import type { LibraryItem } from '@/types';
 
 interface Props {
   items: LibraryItem[];
+  hideHeader?: boolean;
 }
 
 const TABS: { key: LibraryItem['tab']; label: string }[] = [
@@ -14,7 +15,7 @@ const TABS: { key: LibraryItem['tab']; label: string }[] = [
   { key: 'media', label: 'Video & Podcast' },
 ];
 
-export default function LibrarySection({ items }: Props) {
+export default function LibrarySection({ items, hideHeader = false }: Props) {
   const [activeTab, setActiveTab] = useState<LibraryItem['tab']>('bibles');
 
   const visibleItems = items.filter((item) => item.tab === activeTab);
@@ -27,11 +28,15 @@ export default function LibrarySection({ items }: Props) {
     >
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto">
-          <span className="section-label">Curated Resources</span>
-          <h2 className="section-title">The Library</h2>
-          <p className="text-text-light leading-relaxed mt-3" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
-            Trusted tools, theologians, and materials — carefully selected to deepen your walk with God.
-          </p>
+          {!hideHeader && (
+            <>
+              <span className="section-label">Curated Resources</span>
+              <h2 className="section-title">The Library</h2>
+              <p className="text-text-light leading-relaxed mt-3" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
+                Trusted tools, theologians, and materials — carefully selected to deepen your walk with God.
+              </p>
+            </>
+          )}
 
           <div
             className="flex gap-0 mt-8 mb-6 flex-wrap"
