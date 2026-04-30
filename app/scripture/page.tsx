@@ -10,7 +10,7 @@ export default function ScripturePage() {
   return (
     <div style={{ paddingTop: '6rem' }}>
       <div
-        className="text-center py-20 px-8 relative overflow-hidden"
+        className="text-center py-10 px-8 relative overflow-hidden"
         style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div

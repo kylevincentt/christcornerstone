@@ -18,7 +18,7 @@ export default async function ApologeticsPage() {
     <div style={{ paddingTop: '6rem' }}>
       {/* Header */}
       <div
-        className="text-center py-20 px-8 relative overflow-hidden"
+        className="text-center py-10 px-8 relative overflow-hidden"
         style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div
@@ -39,7 +39,7 @@ export default async function ApologeticsPage() {
 
       {/* Categories */}
       <div
-        className="py-16 px-8 md:px-16"
+        className="py-10 px-8 md:px-16"
         style={{ background: 'var(--deep-navy)', borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <AnimateOnScroll>
@@ -71,7 +71,7 @@ export default async function ApologeticsPage() {
       </div>
 
       {/* All Questions */}
-      <div className="max-w-3xl mx-auto px-8 py-16">
+      <div className="max-w-3xl mx-auto px-8 py-10">
         <AnimateOnScroll>
           <span className="section-label">All Questions</span>
           <h2 className="section-title mb-10">The Hard Questions</h2>
