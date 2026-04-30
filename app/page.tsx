@@ -35,7 +35,7 @@ export default async function HomePage() {
       {/* Video promo card */}
       <Link href="/videos" className="block no-underline group" aria-label="Watch: Why Should I Believe the Bible?">
         <div
-          className="text-center py-14 px-8 relative overflow-hidden"
+          className="text-center py-8 px-8 relative overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%)',
             borderTop: '1px solid rgba(201,168,76,0.1)',
@@ -89,7 +89,7 @@ export default async function HomePage() {
       {/* Today's Verse — placed just above the email signup in Footer */}
       <section
         id="todays-verse"
-        className="py-12 px-6 text-center"
+        className="py-8 px-6 text-center"
         style={{ background: 'var(--midnight)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
       >
         <span className="font-cinzel text-gold-dim tracking-[0.25em] uppercase block mb-3" style={{ fontSize: '0.78rem' }}>
