@@ -11,7 +11,7 @@ export default function ReligionsSection({ religions }: Props) {
   return (
     <section
       id="religions"
-      className="py-24 px-8 md:px-16"
+      className="py-16 px-8 md:px-16"
       style={{ background: 'var(--midnight)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
     >
       <AnimateOnScroll>
@@ -25,7 +25,7 @@ export default function ReligionsSection({ religions }: Props) {
             Every major religion asks the same deep questions. See how Christianity&apos;s answers compare — respectfully, clearly, and honestly.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {religions.map((religion) => (
               <Link
                 key={religion.id}

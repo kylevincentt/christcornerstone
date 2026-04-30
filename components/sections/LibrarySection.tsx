@@ -23,7 +23,7 @@ export default function LibrarySection({ items, hideHeader = false }: Props) {
   return (
     <section
       id="library"
-      className="py-24 px-8 md:px-16"
+      className="py-16 px-8 md:px-16"
       style={{ background: 'var(--deep-navy)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
     >
       <AnimateOnScroll>
@@ -39,7 +39,7 @@ export default function LibrarySection({ items, hideHeader = false }: Props) {
           )}
 
           <div
-            className="flex gap-0 mt-8 mb-6 flex-wrap"
+            className="flex gap-0 mt-6 mb-6 flex-wrap"
             style={{ borderBottom: '1px solid rgba(201,168,76,0.15)' }}
           >
             {TABS.map((tab) => (

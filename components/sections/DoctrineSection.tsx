@@ -10,11 +10,11 @@ export default function DoctrineSection({ doctrines }: Props) {
   const featured = doctrines.slice(0, 8);
 
   return (
-    <section id="doctrine" className="py-24 px-4 sm:px-8 md:px-16">
+    <section id="doctrine" className="py-16 px-4 sm:px-8 md:px-16">
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div>
               <span className="section-label">Foundations of the Faith</span>
               <h2 className="section-title">Core Doctrines</h2>
