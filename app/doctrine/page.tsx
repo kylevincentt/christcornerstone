@@ -15,7 +15,7 @@ export default async function DoctrinePage() {
     <div style={{ paddingTop: '6rem' }}>
       {/* Header */}
       <div
-        className="text-center py-20 px-8 relative overflow-hidden"
+        className="text-center py-10 px-8 relative overflow-hidden"
         style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div
@@ -35,7 +35,7 @@ export default async function DoctrinePage() {
       </div>
 
       {/* Grid */}
-      <div className="max-w-6xl mx-auto px-8 py-20">
+      <div className="max-w-6xl mx-auto px-8 py-10">
         <AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {doctrines.map((doctrine, i) => (

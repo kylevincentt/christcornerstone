@@ -19,7 +19,7 @@ export default function QuotesSection({ quotes, hideHeader = false }: Props) {
   return (
     <section
       id="quotes"
-      className="py-14 overflow-hidden"
+      className="py-8 overflow-hidden"
       style={{
         background: 'var(--deep-navy)',
         borderTop: '1px solid rgba(201,168,76,0.1)',

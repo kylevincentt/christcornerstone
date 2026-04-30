@@ -67,7 +67,7 @@ export default async function ReligionDetailPage({ params }: Props) {
   return (
     <div style={{ paddingTop: '6rem' }}>
       <div
-        className="text-center py-20 px-8 relative overflow-hidden"
+        className="text-center py-10 px-8 relative overflow-hidden"
         style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div
@@ -96,7 +96,7 @@ export default async function ReligionDetailPage({ params }: Props) {
         </p>
       </div>
 
-      <div className="max-w-3xl mx-auto px-8 py-16">
+      <div className="max-w-3xl mx-auto px-8 py-10">
         {/* Key comparison */}
         <div
           className="rounded-2xl p-7 mb-12"
@@ -125,7 +125,7 @@ export default async function ReligionDetailPage({ params }: Props) {
 
         {/* Navigation */}
         <div
-          className="flex justify-between gap-6 mt-20 pt-10"
+          className="flex justify-between gap-6 mt-10 pt-10"
           style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}
         >
           {prev ? (

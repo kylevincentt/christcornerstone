@@ -70,7 +70,7 @@ export default function StartHerePage() {
     <div style={{ paddingTop: '6rem' }}>
       {/* Hero */}
       <div
-        className="text-center py-24 px-8 relative overflow-hidden"
+        className="text-center py-10 px-8 relative overflow-hidden"
         style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div
@@ -92,10 +92,10 @@ export default function StartHerePage() {
       </div>
 
       {/* Steps */}
-      <div className="max-w-3xl mx-auto px-8 py-20">
+      <div className="max-w-3xl mx-auto px-8 py-10">
         {STEPS.map((step, i) => (
           <AnimateOnScroll key={step.number} delay={i * 100}>
-            <div className="flex gap-8 mb-16 group">
+            <div className="flex gap-8 mb-8 group">
               <div className="flex-shrink-0">
                 <span
                   className="font-cinzel text-gold-dim"
@@ -122,7 +122,7 @@ export default function StartHerePage() {
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className="mb-8 sm:mb-16 sm:ml-24"
+                className="mb-8 sm:mb-8 sm:ml-24"
                 style={{ height: '1px', background: 'linear-gradient(to right, rgba(201,168,76,0.15), transparent)' }}
               />
             )}
@@ -132,7 +132,7 @@ export default function StartHerePage() {
 
       {/* FAQs */}
       <div
-        className="py-20 px-8"
+        className="py-10 px-8"
         style={{ background: 'var(--deep-navy)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div className="max-w-3xl mx-auto">
@@ -160,7 +160,7 @@ export default function StartHerePage() {
       </div>
 
       {/* Pathways */}
-      <div className="py-20 px-8" style={{ background: 'var(--midnight)' }}>
+      <div className="py-10 px-8" style={{ background: 'var(--midnight)' }}>
         <div className="max-w-6xl mx-auto text-center">
           <AnimateOnScroll>
             <span className="section-label">Where to Go Next</span>
@@ -211,7 +211,7 @@ export default function StartHerePage() {
 
       {/* Email signup */}
       <div
-        className="py-20 px-8 text-center"
+        className="py-10 px-8 text-center"
         style={{ background: 'var(--deep-navy)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
       >
         <AnimateOnScroll>

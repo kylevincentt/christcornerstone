@@ -10,7 +10,7 @@ export default function DoctrineSection({ doctrines }: Props) {
   const featured = doctrines.slice(0, 8);
 
   return (
-    <section id="doctrine" className="py-16 px-4 sm:px-8 md:px-16">
+    <section id="doctrine" className="py-10 px-4 sm:px-8 md:px-16">
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto">
           {/* Header */}

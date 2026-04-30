@@ -41,6 +41,16 @@ export default function Nav() {
     }
   }, [menuOpen]);
 
+  // Close drawer on Escape key (a11y).
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [menuOpen]);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -95,24 +105,52 @@ export default function Nav() {
         </div>
       </nav>
 
+      {/*
+        Mobile drawer. Outer div is the dimmed backdrop — clicking it closes the menu.
+        Inner content panel stops propagation so taps on links/header don't double-fire close.
+        A dedicated close button (X) sits at top-right with a 44x44 tap target.
+        Escape key also closes (handled in the useEffect above).
+      */}
       <div id="mobile-menu" role="dialog" aria-modal={menuOpen || undefined} aria-label="Mobile navigation"
-        className="fixed inset-0 z-[150] flex flex-col items-center justify-center transition-opacity duration-300 px-4"
-        style={{ background: 'rgba(var(--page-bg), 0.97)', backdropFilter: 'blur(12px)', opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? 'all' : 'none' }}>
-        <p className="font-cinzel text-gold text-base tracking-[0.2em] mb-4">✦ CHRISTCORNERSTONE</p>
-        <Link href="/start-here" onClick={closeMenu}
-          className="font-cinzel font-bold text-midnight bg-gold rounded-full mb-4 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase">
-          Start Here
-        </Link>
-        {([['Home', '/'], ...NAV_LINKS] as ReadonlyArray<[string, string]>).map(([label, href]) => {
-          const active = isActivePath(pathname, href);
-          return (
-            <Link key={label} href={href} onClick={closeMenu} aria-current={active ? 'page' : undefined}
-              className={'font-cinzel text-lg tracking-[0.18em] uppercase no-underline py-2.5 px-8 transition-colors duration-300 hover:text-gold w-full text-center max-w-sm first:border-t ' + (active ? 'text-gold' : 'text-text-light')}
-              style={{ borderBottom: '1px solid rgba(var(--gold-rgb), 0.08)' }}>
-              {label}
-            </Link>
-          );
-        })}
+        className="fixed inset-0 z-[150] transition-opacity duration-300"
+        style={{ background: 'rgba(var(--page-bg), 0.97)', backdropFilter: 'blur(12px)', opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? 'all' : 'none' }}
+        onClick={closeMenu}>
+
+        {/* Close (X) button — top-right, 44px tap target, gold accent */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); closeMenu(); }}
+          aria-label="Close menu"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 flex items-center justify-center w-11 h-11 bg-transparent border-none cursor-pointer text-gold hover:text-gold-light transition-colors duration-200 z-[210] rounded-full"
+          style={{ border: '1px solid rgba(var(--gold-rgb), 0.25)' }}
+        >
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="18" y1="6" x2="6" y2="18" />
+          </svg>
+        </button>
+
+        {/* Content panel — stops propagation so backdrop-close only fires on empty space. */}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="flex flex-col items-center justify-center h-full px-4"
+        >
+          <p className="font-cinzel text-gold text-base tracking-[0.2em] mb-4">✦ CHRISTCORNERSTONE</p>
+          <Link href="/start-here" onClick={closeMenu}
+            className="font-cinzel font-bold text-midnight bg-gold rounded-full mb-4 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase">
+            Start Here
+          </Link>
+          {([['Home', '/'], ...NAV_LINKS] as ReadonlyArray<[string, string]>).map(([label, href]) => {
+            const active = isActivePath(pathname, href);
+            return (
+              <Link key={label} href={href} onClick={closeMenu} aria-current={active ? 'page' : undefined}
+                className={'font-cinzel text-lg tracking-[0.18em] uppercase no-underline py-2.5 px-8 transition-colors duration-300 hover:text-gold w-full text-center max-w-sm first:border-t ' + (active ? 'text-gold' : 'text-text-light')}
+                style={{ borderBottom: '1px solid rgba(var(--gold-rgb), 0.08)' }}>
+                {label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </>
   );

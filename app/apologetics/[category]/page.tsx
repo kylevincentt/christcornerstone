@@ -41,7 +41,7 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
   return (
     <div style={{ paddingTop: '6rem' }}>
       <div
-        className="text-center py-20 px-8 relative overflow-hidden"
+        className="text-center py-10 px-8 relative overflow-hidden"
         style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div
@@ -74,9 +74,9 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
         </p>
       </div>
 
-      <div className="max-w-3xl mx-auto px-8 py-16">
+      <div className="max-w-3xl mx-auto px-8 py-10">
         {questions.length === 0 ? (
-          <div className="text-center py-20">
+          <div className="text-center py-10">
             <p className="font-cormorant text-text-muted italic" style={{ fontSize: '1.3rem' }}>
               More questions coming soon for this category.
             </p>
@@ -115,7 +115,7 @@ export default async function ApologeticsCategoryPage({ params }: Props) {
         )}
 
         {/* Other categories */}
-        <div className="mt-16">
+        <div className="mt-10">
           <p className="font-cinzel text-gold-dim tracking-[0.2em] uppercase mb-6" style={{ fontSize: '0.72rem' }}>
             Other Categories
           </p>
