@@ -16,9 +16,11 @@
   --gold-light: #e2c47a;
   --gold-dim: #8a6e2f;
   --cream: #f5efe0;
-  --cream-dark: #e8dfc8;
-  --text-light: #d4c9b0;
-  --text-muted: #7a7060;
+  --cream-dark: #ece2c5;
+  /* Body text — bumped from #d4c9b0 to brighter cream for AA contrast on dark navy. */
+  --text-light: #ece2c5;
+  /* "Muted" italic / verse text — bumped from #7a7060 (failed AA) to a warm cream that hits ~8:1 on midnight. */
+  --text-muted: #b8a974;
   --page-bg: 10, 14, 26;
   --panel-bg: 15, 22, 40;
   --footer-bg: #06080f;
@@ -37,8 +39,8 @@
   --gold-dim: #a88636;
   --cream: #1a1511;
   --cream-dark: #2b2318;
-  --text-light: #3a3024;
-  --text-muted: #6a5e4a;
+  --text-light: #2b2318;
+  --text-muted: #5a4f3c;
   --page-bg: 250, 246, 235;
   --panel-bg: 241, 233, 211;
   --footer-bg: #ece2c5;
@@ -57,6 +59,9 @@ body {
   color: var(--cream);
   font-family: 'Lato', sans-serif;
   font-weight: 300;
+  /* Bumped base body from browser default 16px to 17px for readability. */
+  font-size: 1.0625rem;
+  line-height: 1.7;
   overflow-x: hidden;
   transition: background 0.3s ease, color 0.3s ease;
 }
@@ -142,12 +147,17 @@ body.admin-page::before { display: none; }
 
 .prose-faith h2 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 600;
   color: var(--cream);
   margin: 2rem 0 1rem;
 }
-.prose-faith p { color: var(--text-light); line-height: 1.8; margin-bottom: 1rem; }
+.prose-faith p {
+  color: var(--text-light);
+  font-size: 1.125rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
 .prose-faith strong { color: var(--gold-light); font-weight: 600; }
 
 .youtube-embed {
