@@ -22,7 +22,7 @@ export default function ScriptureSection({ hideHeader = false }: { hideHeader?: 
   };
 
   return (
-    <section id="scripture" className="py-16 px-8 md:px-16">
+    <section id="scripture" className="py-10 px-8 md:px-16">
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto text-center">
           {!hideHeader && (

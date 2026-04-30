@@ -11,7 +11,7 @@ export default function ReligionsSection({ religions }: Props) {
   return (
     <section
       id="religions"
-      className="py-16 px-8 md:px-16"
+      className="py-10 px-8 md:px-16"
       style={{ background: 'var(--midnight)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
     >
       <AnimateOnScroll>

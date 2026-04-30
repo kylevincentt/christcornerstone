@@ -23,7 +23,7 @@ export default function LibrarySection({ items, hideHeader = false }: Props) {
   return (
     <section
       id="library"
-      className="py-16 px-8 md:px-16"
+      className="py-10 px-8 md:px-16"
       style={{ background: 'var(--deep-navy)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
     >
       <AnimateOnScroll>
