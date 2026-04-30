@@ -16,7 +16,7 @@ export default function ApologeticsSection({ questions, categories }: Props) {
   return (
     <section
       id="apologetics"
-      className="py-24 px-4 sm:px-8 md:px-16 relative overflow-hidden"
+      className="py-16 px-4 sm:px-8 md:px-16 relative overflow-hidden"
       style={{
         background: 'linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%)',
         borderTop: '1px solid rgba(201,168,76,0.1)',
@@ -33,7 +33,7 @@ export default function ApologeticsSection({ questions, categories }: Props) {
         aria-hidden="true"
       />
 
-      <div className="max-w-3xl mx-auto flex flex-col gap-16">
+      <div className="max-w-3xl mx-auto flex flex-col gap-10">
         <AnimateOnScroll>
           <span className="section-label">Defend the Faith</span>
           <h2 className="section-title mb-3">Answers to the Hardest Questions</h2>

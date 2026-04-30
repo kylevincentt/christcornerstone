@@ -19,7 +19,7 @@ export default function QuotesSection({ quotes, hideHeader = false }: Props) {
   return (
     <section
       id="quotes"
-      className="py-20 overflow-hidden"
+      className="py-14 overflow-hidden"
       style={{
         background: 'var(--deep-navy)',
         borderTop: '1px solid rgba(201,168,76,0.1)',
@@ -27,7 +27,7 @@ export default function QuotesSection({ quotes, hideHeader = false }: Props) {
       }}
     >
       {!hideHeader && (
-        <div className="max-w-6xl mx-auto mb-12 px-8 md:px-16">
+        <div className="max-w-6xl mx-auto mb-8 px-8 md:px-16">
           <AnimateOnScroll>
             <span className="section-label">Voices Through the Ages</span>
             <h2 className="section-title">Famous Christian Quotes</h2>
@@ -113,7 +113,7 @@ export default function QuotesSection({ quotes, hideHeader = false }: Props) {
         </div>
       </div>
 
-      <div className="flex justify-center gap-3 mt-10">
+      <div className="flex justify-center gap-3 mt-8">
         <button
           type="button"
           aria-label="Scroll to previous quotes"

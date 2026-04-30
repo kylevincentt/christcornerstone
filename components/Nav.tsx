@@ -96,23 +96,23 @@ export default function Nav() {
       </nav>
 
       <div id="mobile-menu" role="dialog" aria-modal={menuOpen || undefined} aria-label="Mobile navigation"
-        className="fixed inset-0 z-[150] flex flex-col items-center justify-center transition-opacity duration-300"
+        className="fixed inset-0 z-[150] flex flex-col items-center justify-center transition-opacity duration-300 px-4"
         style={{ background: 'rgba(var(--page-bg), 0.97)', backdropFilter: 'blur(12px)', opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? 'all' : 'none' }}>
-        <p className="font-cinzel text-gold text-xl tracking-[0.2em] mb-8">✦ CHRISTCORNERSTONE</p>
+        <p className="font-cinzel text-gold text-base tracking-[0.2em] mb-4">✦ CHRISTCORNERSTONE</p>
+        <Link href="/start-here" onClick={closeMenu}
+          className="font-cinzel font-bold text-midnight bg-gold rounded-full mb-4 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase">
+          Start Here
+        </Link>
         {([['Home', '/'], ...NAV_LINKS] as ReadonlyArray<[string, string]>).map(([label, href]) => {
           const active = isActivePath(pathname, href);
           return (
             <Link key={label} href={href} onClick={closeMenu} aria-current={active ? 'page' : undefined}
-              className={'font-cinzel text-2xl tracking-[0.18em] uppercase no-underline py-5 px-8 transition-colors duration-300 hover:text-gold w-full text-center max-w-sm first:border-t ' + (active ? 'text-gold' : 'text-text-light')}
+              className={'font-cinzel text-lg tracking-[0.18em] uppercase no-underline py-2.5 px-8 transition-colors duration-300 hover:text-gold w-full text-center max-w-sm first:border-t ' + (active ? 'text-gold' : 'text-text-light')}
               style={{ borderBottom: '1px solid rgba(var(--gold-rgb), 0.08)' }}>
               {label}
             </Link>
           );
         })}
-        <Link href="/start-here" onClick={closeMenu}
-          className="font-cinzel font-bold text-midnight bg-gold rounded-full mt-8 px-10 py-4 no-underline hover:bg-gold-light transition-all">
-          Start Here
-        </Link>
       </div>
     </>
   );

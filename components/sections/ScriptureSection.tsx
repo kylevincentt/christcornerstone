@@ -22,7 +22,7 @@ export default function ScriptureSection({ hideHeader = false }: { hideHeader?: 
   };
 
   return (
-    <section id="scripture" className="py-24 px-8 md:px-16">
+    <section id="scripture" className="py-16 px-8 md:px-16">
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto text-center">
           {!hideHeader && (
@@ -82,7 +82,7 @@ export default function ScriptureSection({ hideHeader = false }: { hideHeader?: 
 
           {/* Books grid */}
           <div
-            className="grid gap-2 text-left mt-10"
+            className="grid gap-2 text-left mt-8"
             style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))' }}
           >
             <h3

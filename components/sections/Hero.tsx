@@ -1,13 +1,8 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import type { DailyVerse } from '@/types';
 
-interface HeroProps {
-  verse: DailyVerse;
-}
-
-export default function HeroSection({ verse }: HeroProps) {
+export default function HeroSection() {
   const starsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +32,7 @@ export default function HeroSection({ verse }: HeroProps) {
     <section
       id="home"
       className="min-h-screen flex flex-col items-center justify-center text-center relative px-8 overflow-hidden"
-      style={{ paddingTop: '8rem', paddingBottom: '5rem' }}
+      style={{ paddingTop: '7rem', paddingBottom: '3rem' }}
     >
       {/* Stars */}
       <div ref={starsRef} className="absolute inset-0 pointer-events-none" />
@@ -99,7 +94,7 @@ export default function HeroSection({ verse }: HeroProps) {
 
       {/* Ornamental divider */}
       <div
-        className="flex items-center gap-4 my-7 w-80"
+        className="flex items-center gap-4 my-6 w-80"
         style={{ animation: 'fadeUp 1s 0.7s both' }}
       >
         <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, transparent, var(--gold-dim))' }} />
@@ -108,11 +103,24 @@ export default function HeroSection({ verse }: HeroProps) {
       </div>
 
       <p
-        className="font-cormorant text-text-light max-w-xl leading-relaxed mb-12"
+        className="font-cormorant text-text-light max-w-xl leading-relaxed mb-6"
         style={{ fontSize: '1.4rem', animation: 'fadeUp 1s 0.9s both' }}
       >
-        Truth doesn&apos;t fear questions. Explore the evidence, the doctrine, and the life Christianity offers — wherever you&apos;re starting from.
+        Where do I start?
       </p>
+
+      <div
+        className="mb-8"
+        style={{ animation: 'fadeUp 1s 1.0s both' }}
+      >
+        <Link
+          href="/start-here"
+          className="font-cinzel font-bold text-midnight bg-gold rounded-full px-10 py-4 no-underline hover:bg-gold-light transition-all inline-block tracking-[0.15em] uppercase"
+          style={{ fontSize: '0.85rem' }}
+        >
+          Start Here
+        </Link>
+      </div>
 
       <div
         className="flex gap-4 flex-wrap justify-center"
@@ -132,19 +140,6 @@ export default function HeroSection({ verse }: HeroProps) {
         >
           Defend the Faith
         </Link>
-      </div>
-
-      {/* Daily verse */}
-      <div
-        className="flex items-center gap-4 mt-12 flex-wrap justify-center"
-        style={{ animation: 'fadeUp 1s 1.4s both' }}
-      >
-        <span className="font-cinzel text-gold-dim tracking-[0.25em] uppercase whitespace-nowrap" style={{ fontSize: '0.78rem' }}>
-          Today&apos;s Verse
-        </span>
-        <p className="font-cormorant text-text-light max-w-lg text-center" style={{ fontSize: '1.1rem' }}>
-          &ldquo;{verse.text}&rdquo; — {verse.reference}
-        </p>
       </div>
     </section>
   );
