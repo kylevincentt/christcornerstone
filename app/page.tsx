@@ -30,12 +30,12 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection verse={verse} />
+      <HeroSection />
 
       {/* Video promo card */}
       <Link href="/videos" className="block no-underline group" aria-label="Watch: Why Should I Believe the Bible?">
         <div
-          className="text-center py-24 px-8 relative overflow-hidden"
+          className="text-center py-14 px-8 relative overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%)',
             borderTop: '1px solid rgba(201,168,76,0.1)',
@@ -53,19 +53,19 @@ export default async function HomePage() {
             aria-hidden="true"
           />
 
-          <p className="font-cinzel text-[0.7rem] tracking-[0.3em] uppercase text-gold mb-5 relative" style={{ opacity: 0.7 }}>
+          <p className="font-cinzel text-[0.7rem] tracking-[0.3em] uppercase text-gold mb-4 relative" style={{ opacity: 0.7 }}>
             Featured Video
           </p>
 
           <h2
-            className="font-cormorant font-semibold text-cream max-w-2xl mx-auto mb-6 relative transition-colors duration-300 group-hover:text-gold"
+            className="font-cormorant font-semibold text-cream max-w-2xl mx-auto mb-4 relative transition-colors duration-300 group-hover:text-gold"
             style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)', lineHeight: 1.35 }}
           >
             Why Should I Believe the Bible?
           </h2>
 
           <p
-            className="font-lato text-text-light max-w-2xl mx-auto mb-8 relative"
+            className="font-lato text-text-light max-w-2xl mx-auto mb-6 relative"
             style={{ fontSize: '1rem', lineHeight: 1.75 }}
           >
             &ldquo;I choose to believe the Bible because it is a reliable collection of historical documents written by
@@ -85,6 +85,23 @@ export default async function HomePage() {
       <LibrarySection items={library} />
       <ReligionsSection religions={religions} />
       <QuotesSection quotes={quotes} />
+
+      {/* Today's Verse — placed just above the email signup in Footer */}
+      <section
+        id="todays-verse"
+        className="py-12 px-6 text-center"
+        style={{ background: 'var(--midnight)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
+      >
+        <span className="font-cinzel text-gold-dim tracking-[0.25em] uppercase block mb-3" style={{ fontSize: '0.78rem' }}>
+          Today&apos;s Verse
+        </span>
+        <p className="font-cormorant text-text-light max-w-2xl mx-auto leading-relaxed" style={{ fontSize: '1.4rem' }}>
+          &ldquo;{verse.text}&rdquo;
+        </p>
+        <p className="font-cinzel text-gold tracking-[0.2em] uppercase mt-3" style={{ fontSize: '0.75rem' }}>
+          {verse.reference}
+        </p>
+      </section>
     </>
   );
 }
