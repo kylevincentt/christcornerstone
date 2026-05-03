@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSermonBySlug, getWeeklySermons } from '@/lib/content';
+import SermonAudioPlayer from '@/components/SermonAudioPlayer';
 
 interface Props {
   params: { slug: string };
@@ -133,14 +134,20 @@ export default async function SermonPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Summary */}
+        {/* Summary — with TTS player */}
         <div className="mb-8">
-          <h2
-            className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
-            style={{ fontSize: '0.72rem' }}
-          >
-            Sermon Summary
-          </h2>
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-5">
+            <h2
+              className="font-cinzel text-gold tracking-[0.25em] uppercase"
+              style={{ fontSize: '0.72rem' }}
+            >
+              Sermon Summary
+            </h2>
+            <SermonAudioPlayer
+              summary={sermon.summary}
+              additionalContext={sermon.additional_context ?? undefined}
+            />
+          </div>
           {sermon.summary.split('\n\n').map((para, i) => (
             <p
               key={i}
@@ -179,7 +186,7 @@ export default async function SermonPage({ params }: Props) {
           </div>
         )}
 
-        {/* Additional context */}
+        {/* Going Deeper / additional context */}
         {sermon.additional_context && (
           <div
             className="rounded-xl px-7 py-6 mb-14"
