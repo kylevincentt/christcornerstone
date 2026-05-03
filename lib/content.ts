@@ -218,7 +218,7 @@ export const getWeeklySermons = unstable_cache(
     try {
       const rows = (await sql`
         SELECT id, slug, youtube_id, title, sermon_date, summary,
-               key_points, scripture_references, sort_order, created_at
+               key_points, scripture_references, additional_context, sort_order, created_at
         FROM weekly_sermons
         ORDER BY sermon_date DESC
       `) as unknown as Array<
