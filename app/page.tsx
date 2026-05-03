@@ -15,12 +15,11 @@ import {
   getReligions,
   getQuotes,
   getLibraryItems,
-  getLatestSermon,
+  getWeeklySermons,
 } from '@/lib/content';
 
 export default async function HomePage() {
-  // Fetch everything in parallel — they're independent.
-  const [verse, doctrines, apoloQs, apoloCats, religions, quotes, library, latestSermon] = await Promise.all([
+  const [verse, doctrines, apoloQs, apoloCats, religions, quotes, library, sermons] = await Promise.all([
     getDailyVerse(),
     getDoctrines(),
     getApologeticsQuestions(),
@@ -28,7 +27,7 @@ export default async function HomePage() {
     getReligions(),
     getQuotes(),
     getLibraryItems(),
-    getLatestSermon(),
+    getWeeklySermons(),
   ]);
 
   return (
@@ -45,7 +44,6 @@ export default async function HomePage() {
             borderBottom: '1px solid rgba(201,168,76,0.1)',
           }}
         >
-          {/* Corner accent — subtle radial glow, not centered */}
           <div
             className="absolute right-[-80px] top-[-80px] pointer-events-none select-none"
             style={{
@@ -82,7 +80,7 @@ export default async function HomePage() {
         </div>
       </Link>
 
-      <WeeklySermonSection sermon={latestSermon} />
+      <WeeklySermonSection sermons={sermons} />
 
       <DoctrineSection doctrines={doctrines} />
       <ApologeticsSection questions={apoloQs} categories={apoloCats} />
@@ -91,7 +89,6 @@ export default async function HomePage() {
       <ReligionsSection religions={religions} />
       <QuotesSection quotes={quotes} />
 
-      {/* Today's Verse — placed just above the email signup in Footer */}
       <section
         id="todays-verse"
         className="py-8 px-6 text-center"

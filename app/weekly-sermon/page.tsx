@@ -4,9 +4,9 @@ import { getWeeklySermons } from '@/lib/content';
 import type { WeeklySermon } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Weekly Sermon | ChristCornerstone',
+  title: 'Sunday Sermons | ChristCornerstone',
   description:
-    "Weekly sermon summaries from Grace Life Community Church — capturing the heart of each Sunday's message.",
+    "Sunday sermon summaries from Grace Life Community Church — capturing the heart of each Sunday's message.",
 };
 
 function SermonCard({ sermon }: { sermon: WeeklySermon }) {
@@ -90,7 +90,7 @@ export default async function WeeklySermonPage() {
           className="font-cormorant font-light text-cream mb-4"
           style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', lineHeight: 1.15 }}
         >
-          Weekly Sermons
+          Sunday Sermons
         </h1>
         <p className="font-lato text-text-muted max-w-xl mx-auto" style={{ fontSize: '1.05rem', lineHeight: 1.7 }}>
           Each Sunday&apos;s message, summarized to capture the heart of the teaching.

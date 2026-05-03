@@ -22,8 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SermonPage({ params }: Props) {
-  const sermon = await getSermonBySlug(params.slug);
+  const [sermon, allSermons] = await Promise.all([
+    getSermonBySlug(params.slug),
+    getWeeklySermons(),
+  ]);
   if (!sermon) notFound();
+
+  const otherSermons = allSermons.filter((s) => s.slug !== params.slug);
 
   const formattedDate = new Date(sermon.sermon_date + 'T00:00:00').toLocaleDateString('en-US', {
     year: 'numeric',
@@ -101,6 +106,33 @@ export default async function SermonPage({ params }: Props) {
           </div>
         )}
 
+        {/* YouTube embed — directly under Key Points */}
+        <div className="mb-10">
+          <h2
+            className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
+            style={{ fontSize: '0.72rem' }}
+          >
+            Watch the Full Sermon
+          </h2>
+          <div
+            className="relative w-full rounded-xl overflow-hidden shadow-2xl"
+            style={{
+              paddingBottom: '56.25%',
+              background: 'var(--deep-navy)',
+              border: '1px solid rgba(201,168,76,0.14)',
+            }}
+          >
+            <iframe
+              src={`https://www.youtube.com/embed/${sermon.youtube_id}`}
+              title={sermon.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+              style={{ border: 'none' }}
+            />
+          </div>
+        </div>
+
         {/* Summary */}
         <div className="mb-8">
           <h2
@@ -150,7 +182,7 @@ export default async function SermonPage({ params }: Props) {
         {/* Additional context */}
         {sermon.additional_context && (
           <div
-            className="rounded-xl px-7 py-6 mb-12"
+            className="rounded-xl px-7 py-6 mb-14"
             style={{
               background: 'rgba(201,168,76,0.04)',
               border: '1px solid rgba(201,168,76,0.12)',
@@ -174,32 +206,70 @@ export default async function SermonPage({ params }: Props) {
           </div>
         )}
 
-        {/* YouTube embed — at the bottom */}
-        <div>
-          <h2
-            className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
-            style={{ fontSize: '0.72rem' }}
-          >
-            Watch the Full Sermon
-          </h2>
+        {/* Previous Sermons */}
+        {otherSermons.length > 0 && (
           <div
-            className="relative w-full rounded-xl overflow-hidden shadow-2xl"
-            style={{
-              paddingBottom: '56.25%',
-              background: 'var(--deep-navy)',
-              border: '1px solid rgba(201,168,76,0.14)',
-            }}
+            className="pt-10"
+            style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}
           >
-            <iframe
-              src={`https://www.youtube.com/embed/${sermon.youtube_id}`}
-              title={sermon.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 w-full h-full"
-              style={{ border: 'none' }}
-            />
+            <h2
+              className="font-cinzel text-gold tracking-[0.25em] uppercase mb-6"
+              style={{ fontSize: '0.72rem' }}
+            >
+              More Sunday Sermons
+            </h2>
+            <div className="space-y-3">
+              {otherSermons.map((s) => {
+                const d = new Date(s.sermon_date + 'T00:00:00').toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                });
+                return (
+                  <Link
+                    key={s.id}
+                    href={`/weekly-sermon/${s.slug}`}
+                    className="flex items-center gap-4 rounded-xl p-4 no-underline group transition-all duration-200 hover:-translate-y-0.5"
+                    style={{
+                      background: 'var(--deep-navy)',
+                      border: '1px solid rgba(201,168,76,0.08)',
+                    }}
+                  >
+                    {/* Thumbnail */}
+                    <div
+                      className="flex-shrink-0 rounded-lg overflow-hidden"
+                      style={{ width: '80px', height: '52px' }}
+                    >
+                      <img
+                        src={`https://i.ytimg.com/vi/${s.youtube_id}/mqdefault.jpg`}
+                        alt={s.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <span
+                        className="font-cinzel text-gold-dim tracking-[0.15em] uppercase block mb-1"
+                        style={{ fontSize: '0.6rem' }}
+                      >
+                        {d}
+                      </span>
+                      <h3
+                        className="font-cormorant text-cream transition-colors duration-200 group-hover:text-gold truncate"
+                        style={{ fontSize: '1.1rem', fontWeight: 600, lineHeight: 1.3 }}
+                      >
+                        {s.title}
+                      </h3>
+                    </div>
+                    <span className="font-cinzel text-gold-dim group-hover:text-gold transition-colors duration-200 flex-shrink-0" style={{ fontSize: '0.75rem' }}>
+                      &rarr;
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </main>
   );
