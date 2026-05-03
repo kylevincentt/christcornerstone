@@ -62,30 +62,11 @@ export default async function SermonPage({ params }: Props) {
 
         {/* Title */}
         <h1
-          className="font-cormorant text-cream mb-8"
+          className="font-cormorant text-cream mb-10"
           style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 600, lineHeight: 1.2 }}
         >
           {sermon.title}
         </h1>
-
-        {/* YouTube embed */}
-        <div
-          className="relative w-full rounded-xl overflow-hidden shadow-2xl mb-10"
-          style={{
-            paddingBottom: '56.25%',
-            background: 'var(--deep-navy)',
-            border: '1px solid rgba(201,168,76,0.14)',
-          }}
-        >
-          <iframe
-            src={`https://www.youtube.com/embed/${sermon.youtube_id}`}
-            title={sermon.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="absolute inset-0 w-full h-full"
-            style={{ border: 'none' }}
-          />
-        </div>
 
         {/* Key points */}
         {sermon.key_points && sermon.key_points.length > 0 && (
@@ -141,7 +122,7 @@ export default async function SermonPage({ params }: Props) {
 
         {/* Scripture references */}
         {sermon.scripture_references && sermon.scripture_references.length > 0 && (
-          <div>
+          <div className="mb-12">
             <h2
               className="font-cinzel text-gold tracking-[0.25em] uppercase mb-4"
               style={{ fontSize: '0.72rem' }}
@@ -165,6 +146,33 @@ export default async function SermonPage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {/* YouTube embed — at the bottom */}
+        <div>
+          <h2
+            className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
+            style={{ fontSize: '0.72rem' }}
+          >
+            Watch the Full Sermon
+          </h2>
+          <div
+            className="relative w-full rounded-xl overflow-hidden shadow-2xl"
+            style={{
+              paddingBottom: '56.25%',
+              background: 'var(--deep-navy)',
+              border: '1px solid rgba(201,168,76,0.14)',
+            }}
+          >
+            <iframe
+              src={`https://www.youtube.com/embed/${sermon.youtube_id}`}
+              title={sermon.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+              style={{ border: 'none' }}
+            />
+          </div>
+        </div>
       </div>
     </main>
   );
