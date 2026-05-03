@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
       summary,
       key_points,
       scripture_references,
+      additional_context,
       sort_order,
     } = body;
 
@@ -35,11 +36,12 @@ export async function POST(request: NextRequest) {
     await sql`
       INSERT INTO weekly_sermons (
         id, slug, youtube_id, title, sermon_date, summary,
-        key_points, scripture_references, sort_order
+        key_points, scripture_references, additional_context, sort_order
       ) VALUES (
         ${id}, ${slug}, ${youtube_id}, ${title}, ${sermon_date}, ${summary},
         ${JSON.stringify(key_points ?? [])}::jsonb,
         ${JSON.stringify(scripture_references ?? [])}::jsonb,
+        ${additional_context ?? null},
         ${sort_order ?? 0}
       )
       ON CONFLICT (slug) DO UPDATE SET
@@ -47,6 +49,7 @@ export async function POST(request: NextRequest) {
         summary = EXCLUDED.summary,
         key_points = EXCLUDED.key_points,
         scripture_references = EXCLUDED.scripture_references,
+        additional_context = EXCLUDED.additional_context,
         updated_at = NOW()
     `;
 
