@@ -122,7 +122,7 @@ export default async function SermonPage({ params }: Props) {
 
         {/* Scripture references */}
         {sermon.scripture_references && sermon.scripture_references.length > 0 && (
-          <div className="mb-12">
+          <div className="mb-10">
             <h2
               className="font-cinzel text-gold tracking-[0.25em] uppercase mb-4"
               style={{ fontSize: '0.72rem' }}
@@ -144,6 +144,33 @@ export default async function SermonPage({ params }: Props) {
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Additional context */}
+        {sermon.additional_context && (
+          <div
+            className="rounded-xl px-7 py-6 mb-12"
+            style={{
+              background: 'rgba(201,168,76,0.04)',
+              border: '1px solid rgba(201,168,76,0.12)',
+            }}
+          >
+            <h2
+              className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
+              style={{ fontSize: '0.72rem' }}
+            >
+              Going Deeper
+            </h2>
+            {sermon.additional_context.split('\n\n').map((para, i) => (
+              <p
+                key={i}
+                className="font-lato text-text-light leading-relaxed mb-4 last:mb-0"
+                style={{ fontSize: '1rem', lineHeight: 1.8, opacity: 0.9 }}
+              >
+                {para.trim()}
+              </p>
+            ))}
           </div>
         )}
 
