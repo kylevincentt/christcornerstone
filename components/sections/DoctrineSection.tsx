@@ -1,3 +1,5 @@
+'use client';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import type { Doctrine } from '@/types';
@@ -8,6 +10,32 @@ interface Props {
 
 export default function DoctrineSection({ doctrines }: Props) {
   const featured = doctrines.slice(0, 8);
+  const [prominentSlug, setProminentSlug] = useState<string | null>(null);
+  const cardRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
+
+  const updateProminent = useCallback(() => {
+    const viewportMid = window.scrollY + window.innerHeight / 2;
+    let closestSlug: string | null = null;
+    let closestDist = Infinity;
+
+    cardRefs.current.forEach((el, slug) => {
+      const rect = el.getBoundingClientRect();
+      const cardMid = window.scrollY + rect.top + rect.height / 2;
+      const dist = Math.abs(cardMid - viewportMid);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestSlug = slug;
+      }
+    });
+
+    setProminentSlug(closestSlug);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateProminent, { passive: true });
+    updateProminent();
+    return () => window.removeEventListener('scroll', updateProminent);
+  }, [updateProminent]);
 
   return (
     <section id="doctrine" className="py-10 px-4 sm:px-8 md:px-16">
@@ -33,54 +61,60 @@ export default function DoctrineSection({ doctrines }: Props) {
 
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {featured.map((doctrine) => (
-              <Link
-                key={doctrine.id}
-                href={`/doctrine/${doctrine.slug}`}
-                className="block no-underline group relative overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
-                style={{
-                  background: 'var(--deep-navy)',
-                  border: '1px solid rgba(201,168,76,0.08)',
-                  padding: '1.8rem',
-                }}
-              >
-                <div
-                  className="absolute top-0 left-0 w-0.5 h-0 bg-gold transition-all duration-300 group-hover:h-full"
-                  style={{ transformOrigin: 'bottom' }}
-                />
-
-                <span
-                  className="font-cinzel tracking-[0.25em] uppercase text-gold-dim block mb-3"
-                  style={{ fontSize: '0.7rem' }}
+            {featured.map((doctrine) => {
+              const isProminent = prominentSlug === doctrine.slug;
+              return (
+                <Link
+                  key={doctrine.id}
+                  ref={(el) => {
+                    if (el) cardRefs.current.set(doctrine.slug, el);
+                    else cardRefs.current.delete(doctrine.slug);
+                  }}
+                  href={`/doctrine/${doctrine.slug}`}
+                  className="block no-underline relative overflow-hidden rounded-2xl"
+                  style={{
+                    background: 'var(--deep-navy)',
+                    border: isProminent
+                      ? '1px solid rgba(201,168,76,0.32)'
+                      : '1px solid rgba(201,168,76,0.08)',
+                    padding: '1.8rem',
+                    transform: isProminent ? 'translateY(-5px) scale(1.025)' : 'translateY(0) scale(1)',
+                    transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), border-color 0.35s ease, box-shadow 0.35s ease',
+                    boxShadow: isProminent
+                      ? '0 18px 52px rgba(0,0,0,0.45), 0 0 24px rgba(201,168,76,0.07)'
+                      : '0 0 0 rgba(0,0,0,0)',
+                    zIndex: isProminent ? 2 : 1,
+                    position: 'relative',
+                  }}
                 >
-                  {doctrine.tag}
-                </span>
-                <h3 className="font-cormorant text-cream mb-2" style={{ fontSize: '1.5rem', fontWeight: 600 }}>
-                  {doctrine.name}
-                </h3>
-                <p className="font-cormorant text-text-muted leading-relaxed mb-4" style={{ fontSize: '1rem' }}>
-                  {doctrine.verse}
-                </p>
-                <p className="text-text-light leading-relaxed" style={{ fontSize: '0.95rem' }}>
-                  {doctrine.description}
-                </p>
+                  {/* Gold left accent — reveals on prominence */}
+                  <div
+                    className="absolute top-0 left-0 w-0.5 bg-gold"
+                    style={{
+                      height: isProminent ? '100%' : '0%',
+                      opacity: isProminent ? 1 : 0,
+                      transition: 'height 0.4s ease, opacity 0.4s ease',
+                    }}
+                  />
 
-                <div
-                  className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: 'rgba(10,14,26,0.96)' }}
-                >
-                  <blockquote className="font-cormorant text-cream-dark leading-relaxed mb-3" style={{ fontSize: '1.1rem' }}>
-                    {doctrine.hover_verse_text}
-                  </blockquote>
-                  <cite className="font-cinzel text-gold tracking-[0.25em] uppercase not-italic" style={{ fontSize: '0.72rem' }}>
-                    {doctrine.hover_verse_citation}
-                  </cite>
-                  <span className="font-cinzel text-gold-dim tracking-[0.15em] uppercase mt-4 block text-xs">
-                    Read More →
+                  <span
+                    className="font-cinzel tracking-[0.25em] uppercase text-gold-dim block mb-3"
+                    style={{ fontSize: '0.7rem' }}
+                  >
+                    {doctrine.tag}
                   </span>
-                </div>
-              </Link>
-            ))}
+                  <h3 className="font-cormorant text-cream mb-2" style={{ fontSize: '1.5rem', fontWeight: 600 }}>
+                    {doctrine.name}
+                  </h3>
+                  <p className="font-cormorant text-text-muted leading-relaxed mb-4" style={{ fontSize: '1rem' }}>
+                    {doctrine.verse}
+                  </p>
+                  <p className="text-text-light leading-relaxed" style={{ fontSize: '0.95rem' }}>
+                    {doctrine.description}
+                  </p>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </AnimateOnScroll>
