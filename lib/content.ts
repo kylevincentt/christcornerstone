@@ -26,6 +26,7 @@ import type {
   Quote,
   LibraryItem,
   DailyVerse,
+  WeeklySermon,
 } from '@/types';
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -41,6 +42,7 @@ export const TAGS = {
   library_items: 'library_items',
   daily_verses: 'daily_verses',
   site_settings: 'site_settings',
+  weekly_sermons: 'weekly_sermons',
 } as const;
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -130,7 +132,6 @@ export const getReligions = unstable_cache(
                                   FROM religions ORDER BY sort_order ASC NULLS LAST`) as unknown as Array<
           Omit<Religion, 'comparison_points'> & { comparison_points: string[] | string }
         >;
-        // Neon returns JSONB columns as already-parsed JS arrays; defensively re-parse if string.
         return rows.map((r) => ({
           ...r,
           comparison_points:
@@ -207,3 +208,55 @@ export async function getDailyVerse(): Promise<DailyVerse> {
   return verses[dayOfYear % verses.length];
 }
 
+// ──────────────────────────────────────────────────────────────────────────
+// Weekly Sermons
+// ──────────────────────────────────────────────────────────────────────────
+
+export const getWeeklySermons = unstable_cache(
+  async (): Promise<WeeklySermon[]> => {
+    if (!sql) return [];
+    try {
+      const rows = (await sql`
+        SELECT id, slug, youtube_id, title, sermon_date, summary,
+               key_points, scripture_references, sort_order, created_at
+        FROM weekly_sermons
+        ORDER BY sermon_date DESC
+      `) as unknown as Array<
+        Omit<WeeklySermon, 'key_points' | 'scripture_references'> & {
+          key_points: string[] | string;
+          scripture_references: string[] | string;
+        }
+      >;
+      return rows.map((r) => ({
+        ...r,
+        sermon_date:
+          typeof r.sermon_date === 'object'
+            ? (r.sermon_date as unknown as Date).toISOString().split('T')[0]
+            : String(r.sermon_date),
+        key_points:
+          typeof r.key_points === 'string'
+            ? JSON.parse(r.key_points)
+            : (r.key_points ?? []),
+        scripture_references:
+          typeof r.scripture_references === 'string'
+            ? JSON.parse(r.scripture_references)
+            : (r.scripture_references ?? []),
+      })) as WeeklySermon[];
+    } catch (err) {
+      console.error('[content] weekly_sermons query failed:', err);
+      return [];
+    }
+  },
+  ['weekly_sermons:all'],
+  { tags: [TAGS.weekly_sermons] }
+);
+
+export async function getLatestSermon(): Promise<WeeklySermon | null> {
+  const sermons = await getWeeklySermons();
+  return sermons.length > 0 ? sermons[0] : null;
+}
+
+export async function getSermonBySlug(slug: string): Promise<WeeklySermon | null> {
+  const sermons = await getWeeklySermons();
+  return sermons.find((s) => s.slug === slug) || null;
+}

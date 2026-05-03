@@ -102,3 +102,19 @@ CREATE TABLE IF NOT EXISTS site_settings (
   value TEXT NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS weekly_sermons (
+  id TEXT PRIMARY KEY,
+  slug TEXT UNIQUE NOT NULL,
+  youtube_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  sermon_date DATE NOT NULL,
+  summary TEXT NOT NULL,
+  key_points JSONB NOT NULL DEFAULT '[]'::jsonb,
+  scripture_references JSONB NOT NULL DEFAULT '[]'::jsonb,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_weekly_sermons_slug ON weekly_sermons(slug);
+CREATE INDEX IF NOT EXISTS idx_weekly_sermons_date ON weekly_sermons(sermon_date DESC);

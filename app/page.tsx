@@ -6,6 +6,7 @@ import ScriptureSection from '@/components/sections/ScriptureSection';
 import LibrarySection from '@/components/sections/LibrarySection';
 import ReligionsSection from '@/components/sections/ReligionsSection';
 import QuotesSection from '@/components/sections/QuotesSection';
+import WeeklySermonSection from '@/components/sections/WeeklySermonSection';
 import {
   getDailyVerse,
   getDoctrines,
@@ -14,11 +15,12 @@ import {
   getReligions,
   getQuotes,
   getLibraryItems,
+  getLatestSermon,
 } from '@/lib/content';
 
 export default async function HomePage() {
   // Fetch everything in parallel — they're independent.
-  const [verse, doctrines, apoloQs, apoloCats, religions, quotes, library] = await Promise.all([
+  const [verse, doctrines, apoloQs, apoloCats, religions, quotes, library, latestSermon] = await Promise.all([
     getDailyVerse(),
     getDoctrines(),
     getApologeticsQuestions(),
@@ -26,6 +28,7 @@ export default async function HomePage() {
     getReligions(),
     getQuotes(),
     getLibraryItems(),
+    getLatestSermon(),
   ]);
 
   return (
@@ -74,10 +77,12 @@ export default async function HomePage() {
 
           <span className="relative inline-flex items-center gap-2 font-cinzel text-[0.75rem] tracking-[0.2em] uppercase text-gold rounded-full px-7 py-3 transition-all duration-300 group-hover:bg-gold group-hover:text-midnight"
             style={{ border: '1px solid rgba(201,168,76,0.35)' }}>
-            See More <span aria-hidden="true">→</span>
+            See More <span aria-hidden="true">&rarr;</span>
           </span>
         </div>
       </Link>
+
+      <WeeklySermonSection sermon={latestSermon} />
 
       <DoctrineSection doctrines={doctrines} />
       <ApologeticsSection questions={apoloQs} categories={apoloCats} />

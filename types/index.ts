@@ -90,3 +90,16 @@ export interface ApologeticsCategory {
   title: string;
   description: string;
 }
+
+export interface WeeklySermon {
+  id: string;
+  slug: string;
+  youtube_id: string;
+  title: string;
+  sermon_date: string;
+  summary: string;
+  key_points: string[];
+  scripture_references: string[];
+  sort_order: number;
+  created_at?: string;
+}
