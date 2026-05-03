@@ -100,6 +100,7 @@ export interface WeeklySermon {
   summary: string;
   key_points: string[];
   scripture_references: string[];
+  additional_context?: string;
   sort_order: number;
   created_at?: string;
 }
