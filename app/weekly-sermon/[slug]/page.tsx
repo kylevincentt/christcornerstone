@@ -107,7 +107,7 @@ export default async function SermonPage({ params }: Props) {
           </div>
         )}
 
-        {/* YouTube embed — directly under Key Points */}
+        {/* YouTube embed */}
         <div className="mb-10">
           <h2
             className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
@@ -143,10 +143,7 @@ export default async function SermonPage({ params }: Props) {
             >
               Sermon Summary
             </h2>
-            <SermonAudioPlayer
-              summary={sermon.summary}
-              additionalContext={sermon.additional_context ?? undefined}
-            />
+            <SermonAudioPlayer audioUrl={sermon.audio_url ?? null} />
           </div>
           {sermon.summary.split('\n\n').map((para, i) => (
             <p
@@ -186,7 +183,7 @@ export default async function SermonPage({ params }: Props) {
           </div>
         )}
 
-        {/* Going Deeper / additional context */}
+        {/* Going Deeper */}
         {sermon.additional_context && (
           <div
             className="rounded-xl px-7 py-6 mb-14"
@@ -242,7 +239,6 @@ export default async function SermonPage({ params }: Props) {
                       border: '1px solid rgba(201,168,76,0.08)',
                     }}
                   >
-                    {/* Thumbnail */}
                     <div
                       className="flex-shrink-0 rounded-lg overflow-hidden"
                       style={{ width: '80px', height: '52px' }}
@@ -253,7 +249,6 @@ export default async function SermonPage({ params }: Props) {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <span
                         className="font-cinzel text-gold-dim tracking-[0.15em] uppercase block mb-1"

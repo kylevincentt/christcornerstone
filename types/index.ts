@@ -101,6 +101,7 @@ export interface WeeklySermon {
   key_points: string[];
   scripture_references: string[];
   additional_context?: string;
+  audio_url?: string | null;
   sort_order: number;
   created_at?: string;
 }
