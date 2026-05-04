@@ -53,7 +53,7 @@ export default function DoctrineSection({ doctrines }: Props) {
             <Link
               href="/doctrine"
               className="font-cinzel font-bold tracking-[0.12em] uppercase text-gold bg-transparent px-6 py-3 rounded-full no-underline transition-all hover:bg-[rgba(201,168,76,0.08)] whitespace-nowrap self-start md:self-end"
-              style={{ fontSize: '0.65rem', border: '1px solid rgba(201,168,76,0.4)' }}
+              style={{ fontSize: '0.7rem', border: '1px solid rgba(201,168,76,0.4)' }}
             >
               View All Doctrines →
             </Link>
@@ -98,19 +98,21 @@ export default function DoctrineSection({ doctrines }: Props) {
                   />
 
                   <span
-                    className="font-cinzel tracking-[0.25em] uppercase text-gold-dim block mb-3"
-                    style={{ fontSize: '0.7rem' }}
+                    className="font-cinzel tracking-[0.2em] uppercase text-gold-dim block mb-3"
+                    style={{ fontSize: '0.75rem' }}
                   >
                     {doctrine.tag}
                   </span>
-                  <h3 className="font-cormorant text-cream mb-2" style={{ fontSize: '1.5rem', fontWeight: 600 }}>
+                  <h3 className="font-cormorant text-cream mb-3" style={{ fontSize: '1.5rem', fontWeight: 600 }}>
                     {doctrine.name}
                   </h3>
-                  <p className="font-cormorant text-text-muted leading-relaxed mb-4" style={{ fontSize: '1rem' }}>
-                    {doctrine.verse}
-                  </p>
-                  <p className="text-text-light leading-relaxed" style={{ fontSize: '0.95rem' }}>
+                  {/* Description first */}
+                  <p className="text-text-light leading-relaxed mb-4" style={{ fontSize: '0.95rem' }}>
                     {doctrine.description}
+                  </p>
+                  {/* Verse second */}
+                  <p className="font-cormorant text-text-muted leading-relaxed" style={{ fontSize: '1rem', fontStyle: 'italic' }}>
+                    {doctrine.verse}
                   </p>
                 </Link>
               );
