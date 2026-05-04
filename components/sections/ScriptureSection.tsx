@@ -3,8 +3,145 @@ import { useState } from 'react';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { BIBLE_BOOKS } from '@/lib/data';
 
+// Abbreviations for book names that overflow their pill buttons
+const ABBR: Record<string, string> = {
+  'Song of Solomon':  'Song of Sol.',
+  '1 Thessalonians':  '1 Thess.',
+  '2 Thessalonians':  '2 Thess.',
+  '1 Corinthians':    '1 Cor.',
+  '2 Corinthians':    '2 Cor.',
+  'Lamentations':     'Lament.',
+  'Ecclesiastes':     'Eccles.',
+  'Deuteronomy':      'Deut.',
+  'Philippians':      'Phil.',
+  '1 Chronicles':     '1 Chr.',
+  '2 Chronicles':     '2 Chr.',
+  'Nehemiah':         'Neh.',
+  'Zechariah':        'Zech.',
+  'Zephaniah':        'Zeph.',
+  'Habakkuk':         'Hab.',
+  'Numbers':          'Num.',
+  'Revelation':       'Rev.',
+};
+
+function abbr(book: string): string {
+  return ABBR[book] ?? book;
+}
+
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{
+        transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+        transition: 'transform 0.3s ease',
+        flexShrink: 0,
+        opacity: 0.7,
+      }}
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function BookGrid({ books, onSelect }: { books: string[]; onSelect: (book: string) => void }) {
+  return (
+    <div
+      className="grid gap-2 pt-1"
+      style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))' }}
+    >
+      {books.map((book) => (
+        <button
+          key={book}
+          type="button"
+          onClick={() => onSelect(book)}
+          aria-label={`Open ${book} on BibleGateway`}
+          title={book}
+          className="rounded-full text-center cursor-pointer transition-all duration-200 font-cinzel tracking-[0.07em] uppercase"
+          style={{
+            background: 'rgba(201,168,76,0.05)',
+            border: '1px solid rgba(201,168,76,0.12)',
+            padding: '0.5rem 0.6rem',
+            fontSize: '0.74rem',
+            color: 'var(--text-muted)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget;
+            el.style.background = 'rgba(201,168,76,0.12)';
+            el.style.borderColor = 'rgba(201,168,76,0.35)';
+            el.style.color = 'var(--gold)';
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget;
+            el.style.background = 'rgba(201,168,76,0.05)';
+            el.style.borderColor = 'rgba(201,168,76,0.12)';
+            el.style.color = 'var(--text-muted)';
+          }}
+        >
+          {abbr(book)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function TestamentDropdown({
+  label,
+  books,
+  open,
+  onToggle,
+  onSelect,
+}: {
+  label: string;
+  books: string[];
+  open: boolean;
+  onToggle: () => void;
+  onSelect: (book: string) => void;
+}) {
+  return (
+    <div
+      className="rounded-2xl overflow-hidden"
+      style={{
+        border: '1px solid rgba(201,168,76,0.15)',
+        background: 'var(--deep-navy)',
+      }}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between px-6 py-4 cursor-pointer font-cinzel uppercase tracking-[0.2em] text-gold"
+        style={{ fontSize: '0.8rem', background: 'transparent', border: 'none', fontWeight: 600 }}
+      >
+        <span>{label}</span>
+        <Chevron open={open} />
+      </button>
+
+      {open && (
+        <div className="px-5 pb-5">
+          <BookGrid books={books} onSelect={onSelect} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ScriptureSection({ hideHeader = false }: { hideHeader?: boolean } = {}) {
   const [search, setSearch] = useState('');
+  const [openOT, setOpenOT] = useState(false);
+  const [openNT, setOpenNT] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,93 +217,22 @@ export default function ScriptureSection({ hideHeader = false }: { hideHeader?: 
             </button>
           </form>
 
-          {/* Books grid */}
-          <div
-            className="grid gap-2 text-left mt-8"
-            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))' }}
-          >
-            <h3
-              className="font-cinzel tracking-[0.35em] uppercase text-gold-dim py-2 border-b mb-1 m-0"
-              style={{
-                gridColumn: '1 / -1',
-                fontSize: '0.72rem',
-                borderColor: 'rgba(201,168,76,0.1)',
-                fontWeight: 400,
-              }}
-            >
-              Old Testament
-            </h3>
-            {BIBLE_BOOKS.old.map((book) => (
-              <button
-                key={book}
-                type="button"
-                onClick={() => handleBookClick(book)}
-                aria-label={`Open ${book} on BibleGateway`}
-                className="rounded-full text-center cursor-pointer transition-all duration-200 font-cinzel tracking-[0.08em] uppercase"
-                style={{
-                  background: 'rgba(201,168,76,0.05)',
-                  border: '1px solid rgba(201,168,76,0.08)',
-                  padding: '0.55rem 0.9rem',
-                  fontSize: '0.68rem',
-                  color: 'var(--text-muted)',
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.background = 'rgba(201,168,76,0.12)';
-                  el.style.borderColor = 'rgba(201,168,76,0.3)';
-                  el.style.color = 'var(--gold)';
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.background = 'rgba(201,168,76,0.05)';
-                  el.style.borderColor = 'rgba(201,168,76,0.08)';
-                  el.style.color = 'var(--text-muted)';
-                }}
-              >
-                {book}
-              </button>
-            ))}
-            <h3
-              className="font-cinzel tracking-[0.35em] uppercase text-gold-dim py-2 border-b mt-3 mb-1 m-0"
-              style={{
-                gridColumn: '1 / -1',
-                fontSize: '0.72rem',
-                borderColor: 'rgba(201,168,76,0.1)',
-                fontWeight: 400,
-              }}
-            >
-              New Testament
-            </h3>
-            {BIBLE_BOOKS.new.map((book) => (
-              <button
-                key={book}
-                type="button"
-                onClick={() => handleBookClick(book)}
-                aria-label={`Open ${book} on BibleGateway`}
-                className="rounded-full text-center cursor-pointer transition-all duration-200 font-cinzel tracking-[0.08em] uppercase"
-                style={{
-                  background: 'rgba(201,168,76,0.05)',
-                  border: '1px solid rgba(201,168,76,0.08)',
-                  padding: '0.55rem 0.9rem',
-                  fontSize: '0.68rem',
-                  color: 'var(--text-muted)',
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.background = 'rgba(201,168,76,0.12)';
-                  el.style.borderColor = 'rgba(201,168,76,0.3)';
-                  el.style.color = 'var(--gold)';
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.background = 'rgba(201,168,76,0.05)';
-                  el.style.borderColor = 'rgba(201,168,76,0.08)';
-                  el.style.color = 'var(--text-muted)';
-                }}
-              >
-                {book}
-              </button>
-            ))}
+          {/* Testament dropdowns */}
+          <div className="space-y-3 text-left mt-8">
+            <TestamentDropdown
+              label="Old Testament"
+              books={BIBLE_BOOKS.old}
+              open={openOT}
+              onToggle={() => setOpenOT((v) => !v)}
+              onSelect={handleBookClick}
+            />
+            <TestamentDropdown
+              label="New Testament"
+              books={BIBLE_BOOKS.new}
+              open={openNT}
+              onToggle={() => setOpenNT((v) => !v)}
+              onSelect={handleBookClick}
+            />
           </div>
         </div>
       </AnimateOnScroll>
