@@ -14,12 +14,12 @@
   --navy: #141d35;
   --gold: #c9a84c;
   --gold-light: #e2c47a;
-  --gold-dim: #8a6e2f;
+  /* Bumped from #8a6e2f (≈2.6:1 contrast on --deep-navy) to a mid-range gold
+     that clears 4.5:1 on dark navy while still reading as "dim" vs --gold. */
+  --gold-dim: #b89044;
   --cream: #f5efe0;
   --cream-dark: #ece2c5;
-  /* Body text — bumped from #d4c9b0 to brighter cream for AA contrast on dark navy. */
   --text-light: #ece2c5;
-  /* "Muted" italic / verse text — bumped from #7a7060 (failed AA) to a warm cream that hits ~8:1 on midnight. */
   --text-muted: #b8a974;
   --page-bg: 10, 14, 26;
   --panel-bg: 15, 22, 40;
@@ -58,8 +58,8 @@ body {
   background: var(--midnight);
   color: var(--cream);
   font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  /* Bumped base body from browser default 16px to 17px for readability. */
+  /* Bumped from 300 (too thin/hard to read) to 400 — applies globally. */
+  font-weight: 400;
   font-size: 1.0625rem;
   line-height: 1.7;
   overflow-x: hidden;
@@ -123,8 +123,10 @@ body::before {
 
 .section-label {
   font-family: 'Cinzel', serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.35em;
+  /* Bumped from 0.78rem — slightly larger for legibility at wide tracking. */
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--gold);
   display: block;
