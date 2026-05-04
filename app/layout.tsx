@@ -52,8 +52,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-// Inline script — runs before first paint, reads saved theme pref, sets data-theme on <html>.
-const themeInitScript = `(function(){try{var t=localStorage.getItem('cc-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();`;
+// Inline script — runs before first paint, reads saved theme pref.
+// Defaults to 'light' when no preference has been saved.
+const themeInitScript = `(function(){try{var t=localStorage.getItem('cc-theme');if(!t){t='light';}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='light';}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
