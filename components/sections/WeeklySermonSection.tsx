@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
+import SermonCardScroller from '@/components/SermonCardScroller';
 import type { WeeklySermon } from '@/types';
 
 interface Props {
@@ -145,14 +146,8 @@ export default function WeeklySermonSection({ sermons }: Props) {
           </Link>
         </div>
 
-        {/* Horizontal scroll */}
-        <div
-          className="overflow-x-auto"
-          style={{
-            scrollSnapType: 'x mandatory',
-            WebkitOverflowScrolling: 'touch',
-          } as React.CSSProperties}
-        >
+        {/* Horizontal scroll with arrow */}
+        <SermonCardScroller>
           <div
             className="flex gap-5 pb-4"
             style={{ paddingLeft: 'clamp(1rem, 4vw, 4rem)', paddingRight: 'clamp(1rem, 4vw, 4rem)' }}
@@ -163,7 +158,7 @@ export default function WeeklySermonSection({ sermons }: Props) {
             {/* Trailing spacer so last card doesn't sit flush against edge */}
             <div className="flex-shrink-0" style={{ width: '1px' }} />
           </div>
-        </div>
+        </SermonCardScroller>
       </AnimateOnScroll>
     </section>
   );

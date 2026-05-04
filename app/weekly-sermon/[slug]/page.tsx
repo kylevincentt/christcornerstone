@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSermonBySlug, getWeeklySermons } from '@/lib/content';
 import SermonAudioPlayer from '@/components/SermonAudioPlayer';
+import ScriptureRefsSection from '@/components/ScriptureRefsSection';
 
 interface Props {
   params: { slug: string };
@@ -84,8 +85,8 @@ export default async function SermonPage({ params }: Props) {
             }}
           >
             <h2
-              className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
-              style={{ fontSize: '0.72rem' }}
+              className="font-cinzel tracking-[0.25em] uppercase mb-5"
+              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
             >
               Key Points
             </h2>
@@ -110,8 +111,8 @@ export default async function SermonPage({ params }: Props) {
         {/* YouTube embed */}
         <div className="mb-10">
           <h2
-            className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
-            style={{ fontSize: '0.72rem' }}
+            className="font-cinzel tracking-[0.25em] uppercase mb-5"
+            style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
           >
             Watch the Full Sermon
           </h2>
@@ -138,8 +139,8 @@ export default async function SermonPage({ params }: Props) {
         <div className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4 mb-5">
             <h2
-              className="font-cinzel text-gold tracking-[0.25em] uppercase"
-              style={{ fontSize: '0.72rem' }}
+              className="font-cinzel tracking-[0.25em] uppercase"
+              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
             >
               Sermon Summary
             </h2>
@@ -160,26 +161,12 @@ export default async function SermonPage({ params }: Props) {
         {sermon.scripture_references && sermon.scripture_references.length > 0 && (
           <div className="mb-10">
             <h2
-              className="font-cinzel text-gold tracking-[0.25em] uppercase mb-4"
-              style={{ fontSize: '0.72rem' }}
+              className="font-cinzel tracking-[0.25em] uppercase mb-4"
+              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
             >
               Scripture References
             </h2>
-            <div className="flex flex-wrap gap-2">
-              {sermon.scripture_references.map((ref) => (
-                <span
-                  key={ref}
-                  className="font-cinzel text-gold-dim tracking-[0.15em] uppercase rounded-full px-4 py-2"
-                  style={{
-                    fontSize: '0.67rem',
-                    border: '1px solid rgba(201,168,76,0.25)',
-                    background: 'rgba(201,168,76,0.05)',
-                  }}
-                >
-                  {ref}
-                </span>
-              ))}
-            </div>
+            <ScriptureRefsSection references={sermon.scripture_references} />
           </div>
         )}
 
@@ -193,8 +180,8 @@ export default async function SermonPage({ params }: Props) {
             }}
           >
             <h2
-              className="font-cinzel text-gold tracking-[0.25em] uppercase mb-5"
-              style={{ fontSize: '0.72rem' }}
+              className="font-cinzel tracking-[0.25em] uppercase mb-5"
+              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
             >
               Going Deeper
             </h2>
@@ -217,8 +204,8 @@ export default async function SermonPage({ params }: Props) {
             style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}
           >
             <h2
-              className="font-cinzel text-gold tracking-[0.25em] uppercase mb-6"
-              style={{ fontSize: '0.72rem' }}
+              className="font-cinzel tracking-[0.25em] uppercase mb-6"
+              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
             >
               More Sunday Sermons
             </h2>
