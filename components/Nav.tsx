@@ -70,7 +70,7 @@ export default function Nav() {
           CHRIST<span className="inline-block w-1 h-1 sm:w-1.5 sm:h-1.5 bg-gold rounded-full mx-1 sm:mx-1.5 mb-0.5 align-middle" aria-hidden="true" />CORNERSTONE
         </Link>
 
-        <ul className="hidden lg:flex gap-10 list-none items-center">
+        <ul className="hidden lg:flex gap-6 xl:gap-10 list-none items-center">
           {NAV_LINKS.map(([label, href]) => {
             const active = isActivePath(pathname, href);
             return (
@@ -84,9 +84,12 @@ export default function Nav() {
             );
           })}
           <li className="ml-2"><ThemeToggle /></li>
-          <li>
-            <Link href="/start-here" aria-current={isActivePath(pathname, '/start-here') ? 'page' : undefined}
-              className="font-cinzel text-[0.8rem] font-bold tracking-[0.15em] uppercase text-midnight bg-gold px-6 py-2.5 rounded-full no-underline transition-all duration-300 hover:bg-gold-light">
+          <li className="flex-shrink-0">
+            <Link
+              href="/start-here"
+              aria-current={isActivePath(pathname, '/start-here') ? 'page' : undefined}
+              className="font-cinzel text-[0.8rem] font-bold tracking-[0.15em] uppercase text-midnight bg-gold px-6 py-2.5 rounded-full no-underline transition-all duration-300 hover:bg-gold-light whitespace-nowrap"
+            >
               Start Here
             </Link>
           </li>
@@ -105,18 +108,11 @@ export default function Nav() {
         </div>
       </nav>
 
-      {/*
-        Mobile drawer. Outer div is the dimmed backdrop — clicking it closes the menu.
-        Inner content panel stops propagation so taps on links/header don't double-fire close.
-        A dedicated close button (X) sits at top-right with a 44x44 tap target.
-        Escape key also closes (handled in the useEffect above).
-      */}
       <div id="mobile-menu" role="dialog" aria-modal={menuOpen || undefined} aria-label="Mobile navigation"
         className="fixed inset-0 z-[150] transition-opacity duration-300"
         style={{ background: 'rgba(var(--page-bg), 0.97)', backdropFilter: 'blur(12px)', opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? 'all' : 'none' }}
         onClick={closeMenu}>
 
-        {/* Close (X) button — top-right, 44px tap target, gold accent */}
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); closeMenu(); }}
@@ -130,14 +126,13 @@ export default function Nav() {
           </svg>
         </button>
 
-        {/* Content panel — stops propagation so backdrop-close only fires on empty space. */}
         <div
           onClick={(e) => e.stopPropagation()}
           className="flex flex-col items-center justify-center h-full px-4"
         >
-          <p className="font-cinzel text-gold text-base tracking-[0.2em] mb-4">✦ CHRISTCORNERSTONE</p>
+          <p className="font-cinzel text-gold text-base tracking-[0.2em] mb-4">&bull; CHRISTCORNERSTONE</p>
           <Link href="/start-here" onClick={closeMenu}
-            className="font-cinzel font-bold text-midnight bg-gold rounded-full mb-4 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase">
+            className="font-cinzel font-bold text-midnight bg-gold rounded-full mb-4 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase whitespace-nowrap">
             Start Here
           </Link>
           {([['Home', '/'], ...NAV_LINKS] as ReadonlyArray<[string, string]>).map(([label, href]) => {

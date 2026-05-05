@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import HeroSection from '@/components/sections/Hero';
 import DoctrineSection from '@/components/sections/DoctrineSection';
+import WeeklyDiscussionSection from '@/components/sections/WeeklyDiscussionSection';
 import ApologeticsSection from '@/components/sections/ApologeticsSection';
 import ScriptureSection from '@/components/sections/ScriptureSection';
 import LibrarySection from '@/components/sections/LibrarySection';
@@ -83,6 +84,7 @@ export default async function HomePage() {
       <WeeklySermonSection sermons={sermons} />
 
       <DoctrineSection doctrines={doctrines} />
+      <WeeklyDiscussionSection />
       <ApologeticsSection questions={apoloQs} categories={apoloCats} />
       <ScriptureSection />
       <LibrarySection items={library} />
