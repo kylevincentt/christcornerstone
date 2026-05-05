@@ -162,30 +162,50 @@ export default function DiscussionPage({ params }: Props) {
           </div>
         )}
 
-        {/* Additional context */}
-        {discussion.additional_context && (
-          <div
-            className="rounded-xl px-7 py-6 mb-14"
-            style={{
-              background: 'rgba(201,168,76,0.04)',
-              border: '1px solid rgba(201,168,76,0.12)',
-            }}
-          >
+        {/* Detailed Outline */}
+        {discussion.outline && discussion.outline.length > 0 && (
+          <div className="mb-14">
             <h2
-              className="font-cinzel tracking-[0.25em] uppercase mb-5"
+              className="font-cinzel tracking-[0.25em] uppercase mb-6"
               style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
             >
-              About This Series
+              Detailed Outline
             </h2>
-            {discussion.additional_context.split('\n\n').map((para, i) => (
-              <p
-                key={i}
-                className="font-lato text-text-light leading-relaxed mb-4 last:mb-0"
-                style={{ fontSize: '1rem', lineHeight: 1.8, opacity: 0.9 }}
-              >
-                {para.trim()}
-              </p>
-            ))}
+            <div className="space-y-6">
+              {discussion.outline.map((section, si) => (
+                <div
+                  key={si}
+                  className="rounded-xl px-7 py-6"
+                  style={{
+                    background: 'var(--deep-navy)',
+                    border: '1px solid rgba(201,168,76,0.08)',
+                  }}
+                >
+                  <h3
+                    className="font-cinzel text-gold mb-4"
+                    style={{ fontSize: '0.75rem', letterSpacing: '0.15em' }}
+                  >
+                    {section.heading}
+                  </h3>
+                  <ul className="space-y-3">
+                    {section.points.map((point, pi) => (
+                      <li key={pi} className="flex items-start gap-3">
+                        <span
+                          className="flex-shrink-0 mt-2 rounded-full bg-gold"
+                          style={{ width: '4px', height: '4px', opacity: 0.5 }}
+                        />
+                        <span
+                          className="font-lato text-text-light leading-relaxed"
+                          style={{ fontSize: '0.97rem', lineHeight: 1.75 }}
+                        >
+                          {point}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
