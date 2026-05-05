@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { DISCUSSIONS, getDiscussionBySlug } from '@/lib/discussions';
 import ScriptureRefsSection from '@/components/ScriptureRefsSection';
+import DiscussionAudioPlayer from '@/components/DiscussionAudioPlayer';
 
 interface Props {
   params: { slug: string };
@@ -33,6 +34,12 @@ export default function DiscussionPage({ params }: Props) {
     day: 'numeric',
   });
 
+  // Build the full text for the TTS player: summary + outline
+  const ttsText = [
+    discussion.summary,
+    ...(discussion.outline?.flatMap((s) => [s.heading + '.', ...s.points]) ?? []),
+  ].join(' ');
+
   return (
     <main className="min-h-screen" style={{ background: 'var(--midnight)', paddingTop: '7rem' }}>
       <div className="max-w-3xl mx-auto px-6 pb-24">
@@ -47,17 +54,11 @@ export default function DiscussionPage({ params }: Props) {
 
         {/* Date & label */}
         <div className="flex items-center gap-3 mb-5">
-          <span
-            className="font-cinzel text-gold tracking-[0.2em] uppercase"
-            style={{ fontSize: '0.72rem', opacity: 0.85 }}
-          >
+          <span className="font-cinzel text-gold tracking-[0.2em] uppercase" style={{ fontSize: '0.72rem', opacity: 0.85 }}>
             {formattedDate}
           </span>
           <span style={{ color: 'rgba(201,168,76,0.3)' }}>&mdash;</span>
-          <span
-            className="font-cinzel text-gold-dim tracking-[0.2em] uppercase"
-            style={{ fontSize: '0.72rem' }}
-          >
+          <span className="font-cinzel text-gold-dim tracking-[0.2em] uppercase" style={{ fontSize: '0.72rem' }}>
             {discussion.series}
           </span>
         </div>
@@ -74,24 +75,15 @@ export default function DiscussionPage({ params }: Props) {
         {discussion.key_points && discussion.key_points.length > 0 && (
           <div
             className="rounded-xl px-7 py-6 mb-8"
-            style={{
-              background: 'var(--deep-navy)',
-              borderLeft: '3px solid rgba(201,168,76,0.5)',
-            }}
+            style={{ background: 'var(--deep-navy)', borderLeft: '3px solid rgba(201,168,76,0.5)' }}
           >
-            <h2
-              className="font-cinzel tracking-[0.25em] uppercase mb-5"
-              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
-            >
+            <h2 className="font-cinzel tracking-[0.25em] uppercase mb-5" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
               Key Points
             </h2>
             <ul className="space-y-3">
               {discussion.key_points.map((point, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span
-                    className="font-cinzel text-gold mt-0.5 flex-shrink-0"
-                    style={{ fontSize: '0.65rem', opacity: 0.7 }}
-                  >
+                  <span className="font-cinzel text-gold mt-0.5 flex-shrink-0" style={{ fontSize: '0.65rem', opacity: 0.7 }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <span className="font-lato text-text-light leading-relaxed" style={{ fontSize: '1rem' }}>
@@ -105,19 +97,12 @@ export default function DiscussionPage({ params }: Props) {
 
         {/* YouTube embed */}
         <div className="mb-10">
-          <h2
-            className="font-cinzel tracking-[0.25em] uppercase mb-5"
-            style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
-          >
+          <h2 className="font-cinzel tracking-[0.25em] uppercase mb-5" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
             Watch the Full Discussion
           </h2>
           <div
             className="relative w-full rounded-xl overflow-hidden shadow-2xl"
-            style={{
-              paddingBottom: '56.25%',
-              background: 'var(--deep-navy)',
-              border: '1px solid rgba(201,168,76,0.14)',
-            }}
+            style={{ paddingBottom: '56.25%', background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.14)' }}
           >
             <iframe
               src={`https://www.youtube.com/embed/${discussion.youtube_id}`}
@@ -130,20 +115,16 @@ export default function DiscussionPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Summary */}
+        {/* Summary with TTS player */}
         <div className="mb-8">
-          <h2
-            className="font-cinzel tracking-[0.25em] uppercase mb-5"
-            style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
-          >
-            Summary
-          </h2>
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-5">
+            <h2 className="font-cinzel tracking-[0.25em] uppercase" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
+              Summary
+            </h2>
+            <DiscussionAudioPlayer text={ttsText} />
+          </div>
           {discussion.summary.split('\n\n').map((para, i) => (
-            <p
-              key={i}
-              className="font-lato text-text-light leading-relaxed mb-4"
-              style={{ fontSize: '1.05rem', lineHeight: 1.8 }}
-            >
+            <p key={i} className="font-lato text-text-light leading-relaxed mb-4" style={{ fontSize: '1.05rem', lineHeight: 1.8 }}>
               {para.trim()}
             </p>
           ))}
@@ -152,10 +133,7 @@ export default function DiscussionPage({ params }: Props) {
         {/* Scripture references */}
         {discussion.scripture_references.length > 0 && (
           <div className="mb-10">
-            <h2
-              className="font-cinzel tracking-[0.25em] uppercase mb-4"
-              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
-            >
+            <h2 className="font-cinzel tracking-[0.25em] uppercase mb-4" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
               Scripture References
             </h2>
             <ScriptureRefsSection references={discussion.scripture_references} />
@@ -165,10 +143,7 @@ export default function DiscussionPage({ params }: Props) {
         {/* Detailed Outline */}
         {discussion.outline && discussion.outline.length > 0 && (
           <div className="mb-14">
-            <h2
-              className="font-cinzel tracking-[0.25em] uppercase mb-6"
-              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
-            >
+            <h2 className="font-cinzel tracking-[0.25em] uppercase mb-6" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
               Detailed Outline
             </h2>
             <div className="space-y-6">
@@ -176,28 +151,16 @@ export default function DiscussionPage({ params }: Props) {
                 <div
                   key={si}
                   className="rounded-xl px-7 py-6"
-                  style={{
-                    background: 'var(--deep-navy)',
-                    border: '1px solid rgba(201,168,76,0.08)',
-                  }}
+                  style={{ background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.08)' }}
                 >
-                  <h3
-                    className="font-cinzel text-gold mb-4"
-                    style={{ fontSize: '0.75rem', letterSpacing: '0.15em' }}
-                  >
+                  <h3 className="font-cinzel text-gold mb-4" style={{ fontSize: '0.75rem', letterSpacing: '0.15em' }}>
                     {section.heading}
                   </h3>
                   <ul className="space-y-3">
                     {section.points.map((point, pi) => (
                       <li key={pi} className="flex items-start gap-3">
-                        <span
-                          className="flex-shrink-0 mt-2 rounded-full bg-gold"
-                          style={{ width: '4px', height: '4px', opacity: 0.5 }}
-                        />
-                        <span
-                          className="font-lato text-text-light leading-relaxed"
-                          style={{ fontSize: '0.97rem', lineHeight: 1.75 }}
-                        >
+                        <span className="flex-shrink-0 mt-2 rounded-full bg-gold" style={{ width: '4px', height: '4px', opacity: 0.5 }} />
+                        <span className="font-lato text-text-light leading-relaxed" style={{ fontSize: '0.97rem', lineHeight: 1.75 }}>
                           {point}
                         </span>
                       </li>
@@ -212,56 +175,30 @@ export default function DiscussionPage({ params }: Props) {
         {/* More discussions */}
         {otherDiscussions.length > 0 && (
           <div className="pt-10" style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}>
-            <h2
-              className="font-cinzel tracking-[0.25em] uppercase mb-6"
-              style={{ fontSize: '0.72rem', color: 'var(--cream)' }}
-            >
+            <h2 className="font-cinzel tracking-[0.25em] uppercase mb-6" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
               More Weekly Discussions
             </h2>
             <div className="space-y-3">
               {otherDiscussions.map((d) => {
-                const date = new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                });
+                const date = new Date(d.date + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                 return (
                   <Link
                     key={d.id}
                     href={`/weekly-discussion/${d.slug}`}
                     className="flex items-center gap-4 rounded-xl p-4 no-underline group transition-all duration-200 hover:-translate-y-0.5"
-                    style={{
-                      background: 'var(--deep-navy)',
-                      border: '1px solid rgba(201,168,76,0.08)',
-                    }}
+                    style={{ background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.08)' }}
                   >
                     <div className="flex-shrink-0 rounded-lg overflow-hidden" style={{ width: '80px', height: '52px' }}>
-                      <img
-                        src={`https://i.ytimg.com/vi/${d.youtube_id}/mqdefault.jpg`}
-                        alt={d.title}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
+                      <img src={`https://i.ytimg.com/vi/${d.youtube_id}/mqdefault.jpg`} alt={d.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span
-                        className="font-cinzel text-gold-dim tracking-[0.15em] uppercase block mb-1"
-                        style={{ fontSize: '0.6rem' }}
-                      >
-                        {date}
-                      </span>
-                      <h3
-                        className="font-cormorant text-cream transition-colors duration-200 group-hover:text-gold truncate"
-                        style={{ fontSize: '1.1rem', fontWeight: 600, lineHeight: 1.3 }}
-                      >
+                      <span className="font-cinzel text-gold-dim tracking-[0.15em] uppercase block mb-1" style={{ fontSize: '0.6rem' }}>{date}</span>
+                      <h3 className="font-cormorant text-cream transition-colors duration-200 group-hover:text-gold truncate" style={{ fontSize: '1.1rem', fontWeight: 600, lineHeight: 1.3 }}>
                         {d.title}
                       </h3>
                     </div>
-                    <span
-                      className="font-cinzel text-gold-dim group-hover:text-gold transition-colors duration-200 flex-shrink-0"
-                      style={{ fontSize: '0.75rem' }}
-                    >
-                      &rarr;
-                    </span>
+                    <span className="font-cinzel text-gold-dim group-hover:text-gold transition-colors duration-200 flex-shrink-0" style={{ fontSize: '0.75rem' }}>&rarr;</span>
                   </Link>
                 );
               })}
