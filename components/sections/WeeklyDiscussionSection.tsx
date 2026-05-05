@@ -123,6 +123,9 @@ function DiscussionCard({ discussion }: { discussion: Discussion }) {
 }
 
 export default function WeeklyDiscussionSection() {
+  // Newest first
+  const sorted = [...DISCUSSIONS].reverse();
+
   return (
     <section
       id="weekly-discussion"
@@ -147,7 +150,7 @@ export default function WeeklyDiscussionSection() {
             className="flex gap-5 pb-4"
             style={{ paddingLeft: 'clamp(1rem, 4vw, 4rem)', paddingRight: 'clamp(1rem, 4vw, 4rem)' }}
           >
-            {DISCUSSIONS.map((discussion) => (
+            {sorted.map((discussion) => (
               <DiscussionCard key={discussion.id} discussion={discussion} />
             ))}
             <div className="flex-shrink-0" style={{ width: '1px' }} />

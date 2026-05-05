@@ -26,7 +26,8 @@ export default function DiscussionPage({ params }: Props) {
   const discussion = getDiscussionBySlug(params.slug);
   if (!discussion) notFound();
 
-  const otherDiscussions = DISCUSSIONS.filter((d) => d.slug !== params.slug);
+  // Show newest first in the "More" section
+  const otherDiscussions = [...DISCUSSIONS].reverse().filter((d) => d.slug !== params.slug);
 
   const formattedDate = new Date(discussion.date + 'T00:00:00').toLocaleDateString('en-US', {
     year: 'numeric',
@@ -34,11 +35,12 @@ export default function DiscussionPage({ params }: Props) {
     day: 'numeric',
   });
 
-  // Build the full text for the TTS player: summary + outline
-  const ttsText = [
-    discussion.summary,
-    ...(discussion.outline?.flatMap((s) => [s.heading + '.', ...s.points]) ?? []),
-  ].join(' ');
+  // Separate TTS texts for summary and outline
+  const summaryText = discussion.summary;
+  const outlineText =
+    discussion.outline
+      ?.map((s) => `${s.heading}. ${s.points.join(' ')}`)
+      .join(' ') ?? '';
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--midnight)', paddingTop: '7rem' }}>
@@ -121,7 +123,7 @@ export default function DiscussionPage({ params }: Props) {
             <h2 className="font-cinzel tracking-[0.25em] uppercase" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
               Summary
             </h2>
-            <DiscussionAudioPlayer text={ttsText} />
+            <DiscussionAudioPlayer text={summaryText} label="Listen to Summary" />
           </div>
           {discussion.summary.split('\n\n').map((para, i) => (
             <p key={i} className="font-lato text-text-light leading-relaxed mb-4" style={{ fontSize: '1.05rem', lineHeight: 1.8 }}>
@@ -140,12 +142,15 @@ export default function DiscussionPage({ params }: Props) {
           </div>
         )}
 
-        {/* Detailed Outline */}
+        {/* Detailed Outline with its own TTS player */}
         {discussion.outline && discussion.outline.length > 0 && (
           <div className="mb-14">
-            <h2 className="font-cinzel tracking-[0.25em] uppercase mb-6" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
-              Detailed Outline
-            </h2>
+            <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+              <h2 className="font-cinzel tracking-[0.25em] uppercase" style={{ fontSize: '0.72rem', color: 'var(--cream)' }}>
+                Detailed Outline
+              </h2>
+              {outlineText && <DiscussionAudioPlayer text={outlineText} label="Listen to Outline" />}
+            </div>
             <div className="space-y-6">
               {discussion.outline.map((section, si) => (
                 <div
