@@ -1,29 +1,8 @@
+import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import SermonCardScroller from '@/components/SermonCardScroller';
-
-interface Discussion {
-  id: string;
-  youtube_id: string;
-  title: string;
-  date: string;
-  summary: string;
-  scripture_references: string[];
-  series: string;
-}
-
-// Add new discussion videos here as they are curated.
-const DISCUSSIONS: Discussion[] = [
-  {
-    id: '1',
-    youtube_id: 'wvb7IoEv5oc',
-    title: 'Doctrine of Christ Part 1: The Incarnation',
-    date: '2026-05-04',
-    series: 'Defenders · Reasonable Faith',
-    summary:
-      'Dr. William Lane Craig opens his Defenders series on the Doctrine of Christ by examining the Incarnation — the eternal Son of God taking on human flesh. Craig explores the philosophical and theological depth of Jesus being fully God and fully man, drawing on the Chalcedonian definition and key New Testament texts to ground this central mystery of the Christian faith.',
-    scripture_references: ['John 1:14', 'Phil. 2:6–8', 'Col. 2:9'],
-  },
-];
+import { DISCUSSIONS } from '@/lib/discussions';
+import type { Discussion } from '@/lib/discussions';
 
 function DiscussionCard({ discussion }: { discussion: Discussion }) {
   const formattedDate = new Date(discussion.date + 'T00:00:00').toLocaleDateString('en-US', {
@@ -38,10 +17,8 @@ function DiscussionCard({ discussion }: { discussion: Discussion }) {
       : discussion.summary;
 
   return (
-    <a
-      href={`https://www.youtube.com/watch?v=${discussion.youtube_id}`}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/weekly-discussion/${discussion.slug}`}
       className="block no-underline group flex-shrink-0"
       style={{ width: '380px', scrollSnapAlign: 'start' } as React.CSSProperties}
     >
@@ -141,7 +118,7 @@ function DiscussionCard({ discussion }: { discussion: Discussion }) {
           )}
         </div>
       </div>
-    </a>
+    </Link>
   );
 }
 
