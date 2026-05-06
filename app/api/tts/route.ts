@@ -4,6 +4,19 @@ export const runtime = 'nodejs';
 // Cache for 24 hours — same text always produces same audio
 export const revalidate = 86400;
 
+/** ElevenLabs eleven_turbo_v2_5 hard limit is 5 000 chars. Stay under it. */
+const MAX_CHARS = 4800;
+
+function truncateToLimit(text: string): string {
+  if (text.length <= MAX_CHARS) return text;
+  // Cut at the last sentence boundary before the limit
+  const cut = text.slice(0, MAX_CHARS);
+  const lastPeriod = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  return lastPeriod > MAX_CHARS * 0.7
+    ? cut.slice(0, lastPeriod + 1)
+    : cut.trimEnd() + '...';
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { text } = await req.json();
@@ -29,7 +42,7 @@ export async function POST(req: NextRequest) {
           Accept: 'audio/mpeg',
         },
         body: JSON.stringify({
-          text,
+          text: truncateToLimit(text),
           model_id: 'eleven_turbo_v2_5',
           voice_settings: {
             stability: 0.45,

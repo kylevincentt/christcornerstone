@@ -91,84 +91,94 @@ export default function DoctrineSection({ doctrines }: Props) {
 
         {/* Horizontal scroller */}
         <div className="relative">
-          <div
-            ref={scrollRef}
-            className="overflow-x-auto"
-            style={{
-              scrollSnapType: 'x mandatory',
-              WebkitOverflowScrolling: 'touch',
-            } as React.CSSProperties}
-          >
+          {/*
+            overflow-x:auto forces overflow-y to auto as well (CSS spec).
+            That clips the prominent card's translateY(-5px) at the top.
+            Fix: wrap in an outer div that absorbs the top clip via paddingTop/
+            negative marginTop, giving the transform room to breathe.
+          */}
+          <div style={{ paddingTop: '10px', marginTop: '-10px', overflow: 'hidden' }}>
             <div
-              className="flex gap-5 pb-4"
+              ref={scrollRef}
+              className="overflow-x-auto"
               style={{
-                paddingLeft: 'clamp(1rem, 4vw, 4rem)',
-                paddingRight: 'clamp(1rem, 4vw, 4rem)',
-              }}
+                scrollSnapType: 'x mandatory',
+                WebkitOverflowScrolling: 'touch',
+                paddingTop: '4px',
+                paddingBottom: '4px',
+              } as React.CSSProperties}
             >
-              {featured.map((doctrine) => {
-                const isProminent = prominentSlug === doctrine.slug;
-                return (
-                  <Link
-                    key={doctrine.id}
-                    ref={(el) => {
-                      if (el) cardRefs.current.set(doctrine.slug, el);
-                      else cardRefs.current.delete(doctrine.slug);
-                    }}
-                    href={`/doctrine/${doctrine.slug}`}
-                    className="block no-underline relative overflow-hidden rounded-2xl flex-shrink-0"
-                    style={{
-                      width: '300px',
-                      scrollSnapAlign: 'start',
-                      background: 'var(--deep-navy)',
-                      border: isProminent
-                        ? '1px solid rgba(201,168,76,0.32)'
-                        : '1px solid rgba(201,168,76,0.08)',
-                      padding: '1.8rem',
-                      transform: isProminent ? 'translateY(-5px) scale(1.025)' : 'translateY(0) scale(1)',
-                      transition:
-                        'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), border-color 0.35s ease, box-shadow 0.35s ease',
-                      boxShadow: isProminent
-                        ? '0 18px 52px rgba(0,0,0,0.45), 0 0 24px rgba(201,168,76,0.07)'
-                        : '0 0 0 rgba(0,0,0,0)',
-                    }}
-                  >
-                    {/* Gold left accent */}
-                    <div
-                      className="absolute top-0 left-0 w-0.5 bg-gold"
-                      style={{
-                        height: isProminent ? '100%' : '0%',
-                        opacity: isProminent ? 1 : 0,
-                        transition: 'height 0.4s ease, opacity 0.4s ease',
+              <div
+                className="flex gap-5 pb-4"
+                style={{
+                  paddingLeft: 'clamp(1rem, 4vw, 4rem)',
+                  paddingRight: 'clamp(1rem, 4vw, 4rem)',
+                }}
+              >
+                {featured.map((doctrine) => {
+                  const isProminent = prominentSlug === doctrine.slug;
+                  return (
+                    <Link
+                      key={doctrine.id}
+                      ref={(el) => {
+                        if (el) cardRefs.current.set(doctrine.slug, el);
+                        else cardRefs.current.delete(doctrine.slug);
                       }}
-                    />
+                      href={`/doctrine/${doctrine.slug}`}
+                      className="block no-underline relative overflow-hidden rounded-2xl flex-shrink-0"
+                      style={{
+                        width: '300px',
+                        scrollSnapAlign: 'start',
+                        background: 'var(--deep-navy)',
+                        border: isProminent
+                          ? '1px solid rgba(201,168,76,0.32)'
+                          : '1px solid rgba(201,168,76,0.08)',
+                        padding: '1.8rem',
+                        transform: isProminent ? 'translateY(-5px) scale(1.025)' : 'translateY(0) scale(1)',
+                        transition:
+                          'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), border-color 0.35s ease, box-shadow 0.35s ease',
+                        boxShadow: isProminent
+                          ? '0 18px 52px rgba(0,0,0,0.45), 0 0 24px rgba(201,168,76,0.07)'
+                          : '0 0 0 rgba(0,0,0,0)',
+                      }}
+                    >
+                      {/* Gold left accent */}
+                      <div
+                        className="absolute top-0 left-0 w-0.5 bg-gold"
+                        style={{
+                          height: isProminent ? '100%' : '0%',
+                          opacity: isProminent ? 1 : 0,
+                          transition: 'height 0.4s ease, opacity 0.4s ease',
+                        }}
+                      />
 
-                    <span
-                      className="font-cinzel tracking-[0.2em] uppercase text-gold-dim block mb-3"
-                      style={{ fontSize: '0.75rem' }}
-                    >
-                      {doctrine.tag}
-                    </span>
-                    <h3
-                      className="font-cormorant text-cream mb-3"
-                      style={{ fontSize: '1.5rem', fontWeight: 600 }}
-                    >
-                      {doctrine.name}
-                    </h3>
-                    <p className="text-text-light leading-relaxed mb-4" style={{ fontSize: '0.95rem' }}>
-                      {doctrine.description}
-                    </p>
-                    <p
-                      className="font-cormorant text-text-muted leading-relaxed"
-                      style={{ fontSize: '1rem', fontStyle: 'italic' }}
-                    >
-                      {doctrine.verse}
-                    </p>
-                  </Link>
-                );
-              })}
-              {/* Trailing spacer so last card doesn't sit flush against edge */}
-              <div className="flex-shrink-0" style={{ width: '1px' }} />
+                      <span
+                        className="font-cinzel tracking-[0.2em] uppercase text-gold-dim block mb-3"
+                        style={{ fontSize: '0.75rem' }}
+                      >
+                        {doctrine.tag}
+                      </span>
+                      <h3
+                        className="font-cormorant text-cream mb-3"
+                        style={{ fontSize: '1.5rem', fontWeight: 600 }}
+                      >
+                        {doctrine.name}
+                      </h3>
+                      <p className="text-text-light leading-relaxed mb-4" style={{ fontSize: '0.95rem' }}>
+                        {doctrine.description}
+                      </p>
+                      <p
+                        className="font-cormorant text-text-muted leading-relaxed"
+                        style={{ fontSize: '1rem', fontStyle: 'italic' }}
+                      >
+                        {doctrine.verse}
+                      </p>
+                    </Link>
+                  );
+                })}
+                {/* Trailing spacer so last card doesn't sit flush against edge */}
+                <div className="flex-shrink-0" style={{ width: '1px' }} />
+              </div>
             </div>
           </div>
 
