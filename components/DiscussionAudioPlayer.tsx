@@ -18,95 +18,288 @@ function fmt(s: number) {
 const gold = 'rgba(201,168,76,';
 const G = (a: number) => `${gold}${a})`;
 
+/**
+ * Estimate playback duration of a text spoken by SpeechSynthesis.
+ * ~165 words/minute at rate=1; scale inversely with playbackRate.
+ * (Used only when ElevenLabs is unavailable and we fall back to the browser
+ * speech engine, which exposes neither duration nor precise time.)
+ */
+function estimateDuration(text: string, rate: number): number {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return (words / 165) * 60 / Math.max(0.1, rate);
+}
+
+type Mode = 'native' | 'browser';
+
 export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary' }: Props) {
   const [phase, setPhase] = useState<'idle' | 'loading' | 'playing' | 'paused' | 'done'>('idle');
+  const [mode, setMode] = useState<Mode>('native');
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [speedIdx, setSpeedIdx] = useState(1);
+
+  // Native (ElevenLabs MP3) state
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const blobUrlRef = useRef<string | null>(null);
-  const speedIdxRef = useRef(1);
 
-  // Keep speedIdxRef in sync so teardown/playBlobUrl always sees current speed
+  // Browser SpeechSynthesis state
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const browserCharOffsetRef = useRef(0); // chars already consumed (for skip)
+  const browserStartTimeRef = useRef(0);  // ms since epoch when current utterance started
+  const browserAccumRef = useRef(0);      // seconds accumulated from finished sub-utterances
+  const browserTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const browserDurationRef = useRef(0);
+
+  const speedIdxRef = useRef(1);
   useEffect(() => { speedIdxRef.current = speedIdx; }, [speedIdx]);
 
+  // ── Cleanup on unmount ────────────────────────────────────────────────
   useEffect(() => () => {
     if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ''; }
     if (blobUrlRef.current) { URL.revokeObjectURL(blobUrlRef.current); }
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    if (browserTickRef.current) clearInterval(browserTickRef.current);
   }, []);
 
   const speed = SPEEDS[speedIdx];
   const pct = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
-  const teardown = useCallback(() => {
+  // ── Native (ElevenLabs) playback ──────────────────────────────────────
+  const teardownNative = useCallback(() => {
     const a = audioRef.current;
     if (a) { a.pause(); a.src = ''; audioRef.current = null; }
     setCurrentTime(0);
     setDuration(0);
   }, []);
 
-  const playBlobUrl = useCallback((url: string, startAt = 0) => {
-    teardown();
+  const playBlobUrl = useCallback((url: string) => {
+    teardownNative();
     const a = new Audio(url);
     a.playbackRate = SPEEDS[speedIdxRef.current];
-    if (startAt > 0) a.currentTime = startAt;
     audioRef.current = a;
     a.addEventListener('loadedmetadata', () => setDuration(a.duration));
     a.addEventListener('timeupdate', () => setCurrentTime(a.currentTime));
     a.addEventListener('canplay', () => setPhase('playing'));
-    a.addEventListener('ended', () => { setPhase('done'); setCurrentTime(0); setDuration(0); audioRef.current = null; });
-    a.addEventListener('error', () => { teardown(); setPhase('idle'); });
-    a.play().catch(() => { teardown(); setPhase('idle'); });
-  }, [teardown]);
+    a.addEventListener('ended', () => {
+      setPhase('done'); setCurrentTime(0); setDuration(0); audioRef.current = null;
+    });
+    a.addEventListener('error', () => { teardownNative(); setPhase('idle'); });
+    a.play().catch(() => { teardownNative(); setPhase('idle'); });
+  }, [teardownNative]);
 
+  // ── Browser SpeechSynthesis playback (fallback) ──────────────────────
+  const teardownBrowser = useCallback(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    if (browserTickRef.current) {
+      clearInterval(browserTickRef.current);
+      browserTickRef.current = null;
+    }
+    utteranceRef.current = null;
+    browserCharOffsetRef.current = 0;
+    browserStartTimeRef.current = 0;
+    browserAccumRef.current = 0;
+    browserDurationRef.current = 0;
+    setCurrentTime(0);
+    setDuration(0);
+  }, []);
+
+  const startBrowserUtterance = useCallback((from: number) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    const synth = window.speechSynthesis;
+    synth.cancel();
+
+    const remainingText = text.slice(from);
+    if (!remainingText.trim()) {
+      teardownBrowser();
+      setPhase('done');
+      return;
+    }
+
+    const utt = new SpeechSynthesisUtterance(remainingText);
+    utt.rate = SPEEDS[speedIdxRef.current];
+    // Pick a slightly more natural English voice if available
+    try {
+      const voices = synth.getVoices();
+      const preferred =
+        voices.find((v) => /en[-_]US/i.test(v.lang) && /Samantha|Google US English|Microsoft Aria/i.test(v.name)) ||
+        voices.find((v) => /en[-_]US/i.test(v.lang)) ||
+        voices.find((v) => /^en/i.test(v.lang));
+      if (preferred) utt.voice = preferred;
+    } catch { /* getVoices not ready — fine, default voice still works */ }
+
+    utt.onend = () => {
+      // Either finished naturally, or cancel() was called for skip/teardown.
+      // Distinguish by whether utteranceRef is still us.
+      if (utteranceRef.current !== utt) return;
+      teardownBrowser();
+      setPhase('done');
+    };
+    utt.onerror = () => {
+      if (utteranceRef.current !== utt) return;
+      teardownBrowser();
+      setPhase('idle');
+    };
+
+    utteranceRef.current = utt;
+    browserCharOffsetRef.current = from;
+    browserStartTimeRef.current = Date.now();
+
+    setPhase('playing');
+    synth.speak(utt);
+
+    // Estimate total duration relative to FULL text and update display via tick.
+    if (browserTickRef.current) clearInterval(browserTickRef.current);
+    browserDurationRef.current = estimateDuration(text, SPEEDS[speedIdxRef.current]);
+    setDuration(browserDurationRef.current);
+
+    browserTickRef.current = setInterval(() => {
+      const elapsedSinceStart = (Date.now() - browserStartTimeRef.current) / 1000;
+      const total = browserAccumRef.current + elapsedSinceStart;
+      setCurrentTime(Math.min(total, browserDurationRef.current));
+    }, 250);
+  }, [text, teardownBrowser]);
+
+  const startBrowserFromBeginning = useCallback(() => {
+    browserAccumRef.current = 0;
+    setMode('browser');
+    startBrowserUtterance(0);
+  }, [startBrowserUtterance]);
+
+  // ── Top-level start (try ElevenLabs, fall back to browser TTS) ────────
   const startAudio = useCallback(async () => {
     if (blobUrlRef.current) {
       setPhase('loading');
+      setMode('native');
       playBlobUrl(blobUrlRef.current);
       return;
     }
     setPhase('loading');
+    setMode('native');
     try {
       const res = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
       });
-      if (!res.ok) throw new Error('TTS failed');
+      if (!res.ok) throw new Error('TTS HTTP ' + res.status);
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.startsWith('audio/')) throw new Error('TTS returned non-audio: ' + ct);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       blobUrlRef.current = url;
       playBlobUrl(url);
-    } catch {
+      return;
+    } catch (err) {
+      // ElevenLabs unavailable (quota exceeded, network error, missing config).
+      // Fall back to the browser's built-in speech engine so the button still
+      // does something useful.
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        startBrowserFromBeginning();
+        return;
+      }
+      console.warn('[DiscussionAudioPlayer] no audio backend available', err);
       setPhase('idle');
     }
-  }, [text, playBlobUrl]);
+  }, [text, playBlobUrl, startBrowserFromBeginning]);
 
+  // ── Play / Pause ──────────────────────────────────────────────────────
   const handlePlayPause = useCallback(() => {
-    if (phase === 'playing') { audioRef.current?.pause(); setPhase('paused'); return; }
-    if (phase === 'paused') { audioRef.current?.play(); setPhase('playing'); return; }
+    if (phase === 'playing') {
+      if (mode === 'native') {
+        audioRef.current?.pause();
+      } else {
+        if (browserTickRef.current) clearInterval(browserTickRef.current);
+        // Snapshot accumulated time before pausing
+        browserAccumRef.current += (Date.now() - browserStartTimeRef.current) / 1000;
+        window.speechSynthesis?.pause();
+      }
+      setPhase('paused');
+      return;
+    }
+    if (phase === 'paused') {
+      if (mode === 'native') {
+        audioRef.current?.play();
+      } else if (window.speechSynthesis) {
+        window.speechSynthesis.resume();
+        browserStartTimeRef.current = Date.now();
+        if (browserTickRef.current) clearInterval(browserTickRef.current);
+        browserTickRef.current = setInterval(() => {
+          const elapsedSinceStart = (Date.now() - browserStartTimeRef.current) / 1000;
+          const total = browserAccumRef.current + elapsedSinceStart;
+          setCurrentTime(Math.min(total, browserDurationRef.current));
+        }, 250);
+      }
+      setPhase('playing');
+      return;
+    }
     startAudio();
-  }, [phase, startAudio]);
+  }, [phase, mode, startAudio]);
 
+  // ── Skip ──────────────────────────────────────────────────────────────
   const handleSkip = useCallback((secs: number) => {
-    const a = audioRef.current;
-    if (!a || !duration) return;
-    a.currentTime = Math.max(0, Math.min(duration, a.currentTime + secs));
-  }, [duration]);
+    if (mode === 'native') {
+      const a = audioRef.current;
+      if (!a || !duration) return;
+      a.currentTime = Math.max(0, Math.min(duration, a.currentTime + secs));
+      return;
+    }
+    // Browser TTS: re-start from a new char offset proportional to seek
+    if (browserDurationRef.current <= 0) return;
+    const targetSecs = Math.max(0, Math.min(browserDurationRef.current, currentTime + secs));
+    const fraction = targetSecs / browserDurationRef.current;
+    const targetChar = Math.max(0, Math.min(text.length - 1, Math.floor(fraction * text.length)));
+    // Snap to nearest space so we don't restart mid-word
+    let snap = targetChar;
+    while (snap > 0 && /\S/.test(text[snap - 1])) snap--;
+    browserAccumRef.current = targetSecs;
+    startBrowserUtterance(snap);
+  }, [mode, duration, currentTime, text, startBrowserUtterance]);
 
+  // ── Seek (progress bar click) ────────────────────────────────────────
   const handleSeek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const a = audioRef.current;
-    if (!a || !duration) return;
+    if (!duration) return;
     const { left, width } = e.currentTarget.getBoundingClientRect();
-    a.currentTime = Math.max(0, Math.min(duration, ((e.clientX - left) / width) * duration));
-  }, [duration]);
+    const fraction = Math.max(0, Math.min(1, (e.clientX - left) / width));
+    if (mode === 'native') {
+      const a = audioRef.current;
+      if (!a) return;
+      a.currentTime = fraction * duration;
+      return;
+    }
+    const targetSecs = fraction * browserDurationRef.current;
+    const targetChar = Math.max(0, Math.min(text.length - 1, Math.floor(fraction * text.length)));
+    let snap = targetChar;
+    while (snap > 0 && /\S/.test(text[snap - 1])) snap--;
+    browserAccumRef.current = targetSecs;
+    startBrowserUtterance(snap);
+  }, [duration, mode, text, startBrowserUtterance]);
 
+  // ── Speed cycle ──────────────────────────────────────────────────────
   const cycleSpeed = useCallback(() => {
     const next = (speedIdx + 1) % SPEEDS.length;
     setSpeedIdx(next);
     speedIdxRef.current = next;
-    if (audioRef.current) audioRef.current.playbackRate = SPEEDS[next];
-  }, [speedIdx]);
+    if (mode === 'native') {
+      if (audioRef.current) audioRef.current.playbackRate = SPEEDS[next];
+    } else {
+      // SpeechSynthesisUtterance.rate is read at speak() time. Restart from current position.
+      if (phase === 'playing' || phase === 'paused') {
+        // Snapshot current time before restart so we resume in place
+        const elapsedSinceStart = phase === 'playing' ? (Date.now() - browserStartTimeRef.current) / 1000 : 0;
+        const totalSecs = browserAccumRef.current + elapsedSinceStart;
+        const fraction = browserDurationRef.current > 0 ? totalSecs / browserDurationRef.current : 0;
+        const targetChar = Math.max(0, Math.min(text.length - 1, Math.floor(fraction * text.length)));
+        let snap = targetChar;
+        while (snap > 0 && /\S/.test(text[snap - 1])) snap--;
+        browserAccumRef.current = totalSecs;
+        startBrowserUtterance(snap);
+      }
+    }
+  }, [speedIdx, mode, phase, text, startBrowserUtterance]);
 
   const isPlaying = phase === 'playing';
   const isLoading = phase === 'loading';
@@ -172,6 +365,11 @@ export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary
           }}>
             {fmt(currentTime)}
             <span style={{ opacity: 0.45 }}> / {fmt(duration)}</span>
+            {mode === 'browser' && (
+              <span style={{ opacity: 0.55, marginLeft: 8, fontSize: '0.62rem', letterSpacing: '0.05em' }}>
+                ~ browser voice
+              </span>
+            )}
           </span>
 
           {/* Playing animation bars */}
