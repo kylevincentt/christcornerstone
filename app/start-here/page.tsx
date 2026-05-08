@@ -4,7 +4,7 @@ import AnimateOnScroll from '@/components/AnimateOnScroll';
 import EmailSignup from '@/components/EmailSignup';
 
 export const metadata: Metadata = {
-  title: 'Start Here — ChristCornerstone',
+  title: 'Start Here',
   description: 'New to Christianity or exploring faith for the first time? This is where to begin.',
 };
 
