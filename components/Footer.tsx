@@ -37,13 +37,15 @@ export default function Footer() {
             <p className="font-cinzel text-[0.75rem] tracking-[0.25em] uppercase text-gold-dim mb-4">Explore</p>
             <ul className="space-y-2 list-none">
               {[
+                ['Start Here', '/start-here'],
                 ['Doctrine', '/doctrine'],
+                ['Weekly Discussion', '/weekly-discussion'],
                 ['Apologetics', '/apologetics'],
                 ['Religions', '/religions'],
                 ['Scripture', '/scripture'],
                 ['Library', '/library'],
                 ['Quotes', '/quotes'],
-                ['Start Here', '/start-here'],
+                ['Videos', '/videos'],
               ].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} className="text-text-muted no-underline hover:text-gold-light transition-colors text-sm">
