@@ -46,6 +46,46 @@ export const TAGS = {
 } as const;
 
 // ──────────────────────────────────────────────────────────────────────────
+// Icon overrides (audit refs: H3 Mormonism, H4 Atheism, H5 apologetics)
+//
+// lib/data.ts has shipped clubs-suit / prohibition / color-emoji icons that
+// don't fit the monochrome gold-on-navy aesthetic or, in two cases, are
+// outright wrong for the subject (clubs-suit shamrock for Mormonism;
+// red "no entry" sign for Atheism). Applied post-fetch so DB rows are
+// also corrected without an admin-side migration.
+// ──────────────────────────────────────────────────────────────────────────
+const RELIGION_ICON_OVERRIDES: Record<string, string> = {
+  // Was '♧' (clubs/shamrock — reads as a card-suit shape).
+  // Replaced with a 4-pointed star — neutral, monoline, doesn't claim
+  // an LDS-specific symbol the source data didn't actually pick.
+  mormonism: '✦',
+  // Was '🚫' (red prohibition / "no entry" — tonally aggressive).
+  // Replaced with a neutral large circle — reads as "open question",
+  // matching the section's "respectfully, clearly, and honestly" framing.
+  atheism: '◯',
+};
+
+const APOLO_CAT_ICON_OVERRIDES: Record<string, string> = {
+  // Color emoji → monoline gold-friendly glyphs that match the rest of
+  // the site's aesthetic. Each glyph is mnemonic for the category.
+  philosophical: '⚖',  // scales — weighing arguments
+  historical: '⌛',     // hourglass — time / history
+  scientific: '⚛',     // atom — science
+  comparative: '⊕',    // circle with cross — multi-perspective
+  personal: '❡',       // pilcrow-with-bullet — personal reflections
+  quick: '➤',          // arrow — quick / move fast
+};
+
+function applyIconOverride<T extends { slug: string; icon: string }>(
+  rows: T[],
+  overrides: Record<string, string>
+): T[] {
+  return rows.map((row) =>
+    overrides[row.slug] ? { ...row, icon: overrides[row.slug] } : row
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────
 // Helpers
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -101,13 +141,15 @@ export const getApologeticsQuestions = unstable_cache(
 );
 
 export const getApologeticsCategories = unstable_cache(
-  async (): Promise<ApologeticsCategory[]> =>
-    safeQuery<ApologeticsCategory>(
+  async (): Promise<ApologeticsCategory[]> => {
+    const rows = await safeQuery<ApologeticsCategory>(
       async () =>
         (await sql!`SELECT id, slug, icon, title, description
                      FROM apologetics_categories ORDER BY sort_order ASC NULLS LAST`) as unknown as ApologeticsCategory[],
       FALLBACK_APOLO_CATS
-    ),
+    );
+    return applyIconOverride(rows, APOLO_CAT_ICON_OVERRIDES);
+  },
   ['apologetics_categories:all'],
   { tags: [TAGS.apologetics_categories] }
 );
@@ -124,15 +166,15 @@ export async function getApologeticsCategoryBySlug(
 // ──────────────────────────────────────────────────────────────────────────
 
 export const getReligions = unstable_cache(
-  async (): Promise<Religion[]> =>
-    safeQuery<Religion>(
+  async (): Promise<Religion[]> => {
+    const rows = await safeQuery<Religion>(
       async () => {
-        const rows = (await sql!`SELECT id, slug, icon, name, adherents, description,
+        const dbRows = (await sql!`SELECT id, slug, icon, name, adherents, description,
                                          comparison_points, full_content, sort_order
                                   FROM religions ORDER BY sort_order ASC NULLS LAST`) as unknown as Array<
           Omit<Religion, 'comparison_points'> & { comparison_points: string[] | string }
         >;
-        return rows.map((r) => ({
+        return dbRows.map((r) => ({
           ...r,
           comparison_points:
             typeof r.comparison_points === 'string'
@@ -141,7 +183,9 @@ export const getReligions = unstable_cache(
         })) as Religion[];
       },
       FALLBACK_RELIGIONS
-    ),
+    );
+    return applyIconOverride(rows, RELIGION_ICON_OVERRIDES);
+  },
   ['religions:all'],
   { tags: [TAGS.religions] }
 );

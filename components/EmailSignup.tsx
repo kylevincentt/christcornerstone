@@ -56,10 +56,11 @@ export default function EmailSignup({ compact = false }: { compact?: boolean }) 
     );
   }
 
-  const inputStyle = {
-    background: 'rgba(20,29,53,0.8)',
-    border: '1px solid rgba(201,168,76,0.2)',
-  };
+  // Common input class — picks up theme-aware background, border, text,
+  // and placeholder colors from .subscribe-input in app/globals.css.
+  // (Audit C4: previously these were hardcoded for dark mode only.)
+  const inputClass =
+    'subscribe-input w-full rounded-full px-6 py-3 font-cormorant text-lg outline-none';
 
   return (
     <form
@@ -77,10 +78,7 @@ export default function EmailSignup({ compact = false }: { compact?: boolean }) 
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoComplete="given-name"
-            className="w-full rounded-full px-6 py-3 text-cream font-cormorant text-lg outline-none transition-colors"
-            style={inputStyle}
-            onFocus={(e) => (e.target.style.borderColor = 'var(--gold)')}
-            onBlur={(e) => (e.target.style.borderColor = 'rgba(201,168,76,0.2)')}
+            className={inputClass}
           />
         </>
       )}
@@ -97,10 +95,7 @@ export default function EmailSignup({ compact = false }: { compact?: boolean }) 
           onChange={(e) => setEmail(e.target.value)}
           aria-invalid={status === 'error' || undefined}
           aria-describedby={status === 'error' ? 'signup-error' : undefined}
-          className="flex-1 rounded-full px-6 py-3 text-cream font-cormorant text-lg outline-none transition-colors min-w-0"
-          style={inputStyle}
-          onFocus={(e) => (e.target.style.borderColor = 'var(--gold)')}
-          onBlur={(e) => (e.target.style.borderColor = 'rgba(201,168,76,0.2)')}
+          className={`${inputClass} flex-1 min-w-0`}
         />
         <button
           type="submit"
@@ -111,7 +106,7 @@ export default function EmailSignup({ compact = false }: { compact?: boolean }) 
         </button>
       </div>
       {status === 'error' && (
-        <p id="signup-error" role="alert" className="text-red-400 text-sm text-center">
+        <p id="signup-error" role="alert" className="subscribe-error text-sm text-center">
           {message}
         </p>
       )}

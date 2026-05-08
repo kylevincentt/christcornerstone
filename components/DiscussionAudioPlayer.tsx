@@ -428,12 +428,6 @@ export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary
           }} />
         </div>
 
-        <style>{`
-          @keyframes tts-bar {
-            from { transform: scaleY(0.3); opacity: 0.5; }
-            to   { transform: scaleY(1);   opacity: 1; }
-          }
-        `}</style>
       </div>
     );
   }
@@ -490,12 +484,6 @@ export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary
       >
         {isLoading ? 'Loading…' : phase === 'done' ? 'Listen Again' : label}
       </span>
-      <style>{`
-        @keyframes tts-spin {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-      `}</style>
     </button>
   );
 }
