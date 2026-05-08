@@ -89,13 +89,41 @@ function applyIconOverride<T extends { slug: string; icon: string }>(
 // Helpers
 // ──────────────────────────────────────────────────────────────────────────
 
-async function safeQuery<T>(fn: () => Promise<T[]>, fallback: T[]): Promise<T[]> {
+/**
+ * Hard cap on every DB query. Without this, a slow / unreachable Neon
+ * connection pins the build worker indefinitely — Next.js then SIGTERMs
+ * the worker after 60 s of "Collecting page data" and the whole deploy
+ * errors out (see the failed deploy on commit 10128ef on 2026-05-08).
+ *
+ * 5 s is well under the 60 s page-collection budget but generous enough
+ * for a healthy Neon round-trip; degrades gracefully to lib/data.ts
+ * fallbacks when exceeded.
+ */
+const DB_QUERY_TIMEOUT_MS = 5000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    promise.then(
+      (v) => {
+        clearTimeout(t);
+        resolve(v);
+      },
+      (err) => {
+        clearTimeout(t);
+        reject(err);
+      }
+    );
+  });
+}
+
+async function safeQuery<T>(fn: () => Promise<T[]>, fallback: T[], label = 'query'): Promise<T[]> {
   if (!sql) return fallback;
   try {
-    const rows = await fn();
+    const rows = await withTimeout(fn(), DB_QUERY_TIMEOUT_MS, `[content] ${label}`);
     return rows && rows.length > 0 ? rows : fallback;
   } catch (err) {
-    console.error('[content] DB query failed, using fallback:', err);
+    console.error(`[content] DB query failed (${label}), using fallback:`, err);
     return fallback;
   }
 }
@@ -112,7 +140,8 @@ export const getDoctrines = unstable_cache(
                             hover_verse_text, hover_verse_citation,
                             full_content, sort_order
                      FROM doctrines ORDER BY sort_order ASC NULLS LAST`) as unknown as Doctrine[],
-      FALLBACK_DOCTRINES
+      FALLBACK_DOCTRINES,
+      'doctrines'
     ),
   ['doctrines:all'],
   { tags: [TAGS.doctrines] }
@@ -134,7 +163,8 @@ export const getApologeticsQuestions = unstable_cache(
         (await sql!`SELECT id, category, question, objection, response,
                             go_deeper, sort_order
                      FROM apologetics_questions ORDER BY sort_order ASC NULLS LAST`) as unknown as ApologeticsQuestion[],
-      FALLBACK_APOLO_QS
+      FALLBACK_APOLO_QS,
+      'apologetics_questions'
     ),
   ['apologetics_questions:all'],
   { tags: [TAGS.apologetics_questions] }
@@ -146,7 +176,8 @@ export const getApologeticsCategories = unstable_cache(
       async () =>
         (await sql!`SELECT id, slug, icon, title, description
                      FROM apologetics_categories ORDER BY sort_order ASC NULLS LAST`) as unknown as ApologeticsCategory[],
-      FALLBACK_APOLO_CATS
+      FALLBACK_APOLO_CATS,
+      'apologetics_categories'
     );
     return applyIconOverride(rows, APOLO_CAT_ICON_OVERRIDES);
   },
@@ -182,7 +213,8 @@ export const getReligions = unstable_cache(
               : (r.comparison_points || []),
         })) as Religion[];
       },
-      FALLBACK_RELIGIONS
+      FALLBACK_RELIGIONS,
+      'religions'
     );
     return applyIconOverride(rows, RELIGION_ICON_OVERRIDES);
   },
@@ -205,7 +237,8 @@ export const getQuotes = unstable_cache(
       async () =>
         (await sql!`SELECT id, text, author, era, avatar_emoji, sort_order
                      FROM quotes ORDER BY sort_order ASC NULLS LAST`) as unknown as Quote[],
-      FALLBACK_QUOTES
+      FALLBACK_QUOTES,
+      'quotes'
     ),
   ['quotes:all'],
   { tags: [TAGS.quotes] }
@@ -221,7 +254,8 @@ export const getLibraryItems = unstable_cache(
       async () =>
         (await sql!`SELECT id, tab, icon, name, description, url, link_text, sort_order
                      FROM library_items ORDER BY sort_order ASC NULLS LAST`) as unknown as LibraryItem[],
-      FALLBACK_LIBRARY
+      FALLBACK_LIBRARY,
+      'library_items'
     ),
   ['library_items:all'],
   { tags: [TAGS.library_items] }
@@ -237,7 +271,8 @@ export const getDailyVerses = unstable_cache(
       async () =>
         (await sql!`SELECT id, text, reference, sort_order
                      FROM daily_verses ORDER BY sort_order ASC NULLS LAST`) as unknown as DailyVerse[],
-      FALLBACK_VERSES
+      FALLBACK_VERSES,
+      'daily_verses'
     ),
   ['daily_verses:all'],
   { tags: [TAGS.daily_verses] }
@@ -254,19 +289,26 @@ export async function getDailyVerse(): Promise<DailyVerse> {
 
 // ──────────────────────────────────────────────────────────────────────────
 // Weekly Sermons
+//
+// Has its own try/catch instead of safeQuery (because of the row-shape
+// transform), so wrap the await in withTimeout directly.
 // ──────────────────────────────────────────────────────────────────────────
 
 export const getWeeklySermons = unstable_cache(
   async (): Promise<WeeklySermon[]> => {
     if (!sql) return [];
     try {
-      const rows = (await sql`
-        SELECT id, slug, youtube_id, title, sermon_date, summary,
-               key_points, scripture_references, additional_context,
-               audio_url, sort_order, created_at
-        FROM weekly_sermons
-        ORDER BY sermon_date DESC
-      `) as unknown as Array<
+      const rows = (await withTimeout(
+        sql`
+          SELECT id, slug, youtube_id, title, sermon_date, summary,
+                 key_points, scripture_references, additional_context,
+                 audio_url, sort_order, created_at
+          FROM weekly_sermons
+          ORDER BY sermon_date DESC
+        `,
+        DB_QUERY_TIMEOUT_MS,
+        '[content] weekly_sermons'
+      )) as unknown as Array<
         Omit<WeeklySermon, 'key_points' | 'scripture_references'> & {
           key_points: string[] | string;
           scripture_references: string[] | string;
