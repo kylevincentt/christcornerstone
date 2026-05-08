@@ -124,7 +124,7 @@ function DiscussionCard({ discussion }: { discussion: Discussion }) {
 
 export default function WeeklyDiscussionSection() {
   // Newest first
-  const sorted = [...DISCUSSIONS].reverse();
+  const sorted = [...DISCUSSIONS].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
   return (
     <section
@@ -142,6 +142,13 @@ export default function WeeklyDiscussionSection() {
               Curated teachings and discussions to deepen your understanding of Christian doctrine and apologetics.
             </p>
           </div>
+          <Link
+            href="/weekly-discussion"
+            className="font-cinzel font-bold tracking-[0.12em] uppercase text-gold bg-transparent px-6 py-3 rounded-full no-underline transition-all hover:bg-[rgba(201,168,76,0.08)] whitespace-nowrap self-start md:self-end"
+            style={{ fontSize: '0.65rem', border: '1px solid rgba(201,168,76,0.4)' }}
+          >
+            View All Discussions &rarr;
+          </Link>
         </div>
 
         {/* Horizontal scroll */}
