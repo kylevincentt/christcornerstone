@@ -81,7 +81,15 @@ export default function Footer() {
           <p className="text-text-muted text-sm">
             © {new Date().getFullYear()} ChristCornerstone.org — Built with purpose and care.
           </p>
-          <span className="text-gold-dim text-2xl">✝</span>
+          {/* Audit L2: cross is now labeled (aria + tooltip) and links to /start-here. */}
+          <Link
+            href="/start-here"
+            aria-label="Start your faith journey"
+            title="Start Here"
+            className="text-gold-dim text-2xl no-underline hover:text-gold transition-colors"
+          >
+            ✝
+          </Link>
         </div>
       </div>
     </footer>

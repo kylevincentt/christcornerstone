@@ -8,6 +8,34 @@ interface Props {
   hideHeader?: boolean;
 }
 
+/**
+ * Author monogram for the avatar roundel (audit M10).
+ *
+ * The previous implementation rendered `quote.avatar_emoji` from data, which
+ * was inconsistent (Augustine = iron-cross, Luther = grid, Piper = flame,
+ * Lewis = lion, Keller = wave). We render initials instead so every author
+ * gets the same readable monogram in the same gold roundel.
+ *
+ * Strips honorifics (St., Dr., Pastor, Rev., Saint) so "St. Augustine" → "A",
+ * and stop-particles (of, the, von, de, da, di, la, le, van) so
+ * "Augustine of Hippo" → "AH" rather than "AO".
+ */
+function getInitials(author: string): string {
+  const cleaned = author
+    .replace(/^(St\.?|Saint|Dr\.?|Rev\.?|Pastor)\s+/i, '')
+    .trim();
+  if (!cleaned) return '·';
+  const stop = new Set(['of', 'the', 'von', 'de', 'da', 'di', 'la', 'le', 'van']);
+  const words = cleaned
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((w) => !stop.has(w.toLowerCase()));
+  if (words.length === 0) return cleaned[0]!.toUpperCase();
+  const firstChar = (s: string) => (s.match(/[A-Za-z]/)?.[0] ?? '').toUpperCase();
+  if (words.length === 1) return firstChar(words[0]);
+  return firstChar(words[0]) + firstChar(words[words.length - 1]);
+}
+
 export default function QuotesSection({ quotes, hideHeader = false }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -89,15 +117,19 @@ export default function QuotesSection({ quotes, hideHeader = false }: Props) {
                 className="flex items-center gap-3 pt-4"
                 style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}
               >
+                {/* Audit M10: monogrammed initials replace per-author emoji. */}
                 <div
                   aria-hidden="true"
-                  className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-base"
+                  className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-cinzel text-gold"
                   style={{
                     background: 'rgba(201,168,76,0.12)',
                     border: '1px solid rgba(201,168,76,0.2)',
+                    fontSize: '0.7rem',
+                    letterSpacing: '0.05em',
+                    fontWeight: 600,
                   }}
                 >
-                  {quote.avatar_emoji}
+                  {getInitials(quote.author)}
                 </div>
                 <div>
                   <p className="font-cinzel text-gold tracking-[0.15em] uppercase" style={{ fontSize: '0.72rem' }}>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import SermonCardScroller from '@/components/SermonCardScroller';
-import { DISCUSSIONS } from '@/lib/discussions';
+import { DISCUSSIONS, sortDiscussions } from '@/lib/discussions';
 import type { Discussion } from '@/lib/discussions';
 
 function DiscussionCard({ discussion }: { discussion: Discussion }) {
@@ -123,8 +123,8 @@ function DiscussionCard({ discussion }: { discussion: Discussion }) {
 }
 
 export default function WeeklyDiscussionSection() {
-  // Newest first
-  const sorted = [...DISCUSSIONS].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  // Series-aware sort — Part 1 leads sequential teaching; newest series first.
+  const sorted = sortDiscussions(DISCUSSIONS);
 
   return (
     <section

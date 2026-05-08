@@ -4,7 +4,7 @@ import { getWeeklySermons } from '@/lib/content';
 import type { WeeklySermon } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Sunday Sermons | ChristCornerstone',
+  title: 'Sunday Sermons',
   description:
     "Sunday sermon summaries from Grace Life Community Church — capturing the heart of each Sunday's message.",
 };

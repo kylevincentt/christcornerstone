@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import ScriptureSection from '@/components/sections/ScriptureSection';
 
 export const metadata: Metadata = {
-  title: 'Scripture Explorer — ChristCornerstone',
-  description: 'Search the Bible by topic or browse every book. Every book linked to trusted study resources.',
+  title: 'Scripture Explorer',
+  description: 'Search the Bible by topic or browse every book. Every book linked to trusted ESV study resources.',
 };
 
 export default function ScripturePage() {

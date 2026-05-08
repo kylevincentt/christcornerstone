@@ -15,9 +15,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const discussion = getDiscussionBySlug(params.slug);
-  if (!discussion) return { title: 'Discussion Not Found | ChristCornerstone' };
+  if (!discussion) return { title: 'Discussion Not Found' };
   return {
-    title: `${discussion.title} | ChristCornerstone`,
+    title: discussion.title,
     description: discussion.summary.slice(0, 160),
   };
 }
@@ -54,12 +54,12 @@ export default function DiscussionPage({ params }: Props) {
           &larr; Back
         </Link>
 
-        {/* Date & label */}
-        <div className="flex items-center gap-3 mb-5">
+        {/* Date & label — stacks vertically on mobile (audit M6); horizontal on >= sm. */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-5">
           <span className="font-cinzel text-gold tracking-[0.2em] uppercase" style={{ fontSize: '0.72rem', opacity: 0.85 }}>
             {formattedDate}
           </span>
-          <span style={{ color: 'rgba(201,168,76,0.3)' }}>&mdash;</span>
+          <span className="hidden sm:inline" style={{ color: 'rgba(201,168,76,0.3)' }}>&mdash;</span>
           <span className="font-cinzel text-gold-dim tracking-[0.2em] uppercase" style={{ fontSize: '0.72rem' }}>
             {discussion.series}
           </span>
@@ -107,7 +107,7 @@ export default function DiscussionPage({ params }: Props) {
             style={{ paddingBottom: '56.25%', background: 'var(--deep-navy)', border: '1px solid rgba(201,168,76,0.14)' }}
           >
             <iframe
-              src={`https://www.youtube.com/embed/${discussion.youtube_id}`}
+              src={`https://www.youtube-nocookie.com/embed/${discussion.youtube_id}?modestbranding=1&rel=0`}
               title={discussion.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

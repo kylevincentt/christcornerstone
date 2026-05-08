@@ -16,9 +16,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const sermon = await getSermonBySlug(params.slug);
-  if (!sermon) return { title: 'Sermon Not Found | ChristCornerstone' };
+  if (!sermon) return { title: 'Sermon Not Found' };
   return {
-    title: `${sermon.title} | ChristCornerstone`,
+    title: sermon.title,
     description: sermon.summary.slice(0, 160),
   };
 }
@@ -51,14 +51,14 @@ export default async function SermonPage({ params }: Props) {
         </Link>
 
         {/* Date & label */}
-        <div className="flex items-center gap-3 mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-5">
           <span
             className="font-cinzel text-gold tracking-[0.2em] uppercase"
             style={{ fontSize: '0.72rem', opacity: 0.85 }}
           >
             {formattedDate}
           </span>
-          <span style={{ color: 'rgba(201,168,76,0.3)' }}>&mdash;</span>
+          <span className="hidden sm:inline" style={{ color: 'rgba(201,168,76,0.3)' }}>&mdash;</span>
           <span
             className="font-cinzel text-gold-dim tracking-[0.2em] uppercase"
             style={{ fontSize: '0.72rem' }}
@@ -125,7 +125,7 @@ export default async function SermonPage({ params }: Props) {
             }}
           >
             <iframe
-              src={`https://www.youtube.com/embed/${sermon.youtube_id}`}
+              src={`https://www.youtube-nocookie.com/embed/${sermon.youtube_id}?modestbranding=1&rel=0`}
               title={sermon.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

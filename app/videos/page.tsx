@@ -3,7 +3,7 @@ import DiscussionAudioPlayer from '@/components/DiscussionAudioPlayer';
 import ScriptureRefsSection from '@/components/ScriptureRefsSection';
 
 export const metadata: Metadata = {
-  title: 'Videos | ChristCornerstone',
+  title: 'Videos',
   description:
     'Watch curated apologetics and theology videos with commentary — equipping you to know and defend the Christian faith.',
 };
@@ -163,11 +163,14 @@ export default function VideosPage() {
         <p className="font-cinzel text-[0.75rem] tracking-[0.35em] uppercase text-gold mb-4 opacity-80">
           ChristCornerstone
         </p>
+        {/* Audit L6: page header reads "Featured Talks" so the H1 doesn't oversell
+            (was "Videos" plural for a single curated talk). The page route + tab
+            title stay /videos and "Videos" so the slot is ready for an archive. */}
         <h1
           className="font-cormorant font-light text-cream mb-4"
           style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', lineHeight: 1.15 }}
         >
-          Videos
+          Featured Talks
         </h1>
         <p className="font-lato text-text-muted max-w-xl mx-auto" style={{ fontSize: '1.05rem', lineHeight: 1.7 }}>
           Apologetics, theology, and faith — watch, learn, and be equipped.
@@ -242,7 +245,7 @@ export default function VideosPage() {
                   }}
                 >
                   <iframe
-                    src={`https://www.youtube.com/embed/${video.id}`}
+                    src={`https://www.youtube-nocookie.com/embed/${video.id}?modestbranding=1&rel=0`}
                     title={video.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

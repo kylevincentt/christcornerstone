@@ -73,9 +73,15 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
+      {/* Audit M5: clamp letter-spacing so the eyebrow doesn't wrap mid-phrase
+          on narrow viewports while keeping the wide tracking on desktop. */}
       <p
-        className="font-cinzel text-gold tracking-[0.35em] uppercase mb-6"
-        style={{ fontSize: '0.85rem', animation: 'fadeUp 1s 0.3s both' }}
+        className="font-cinzel text-gold uppercase mb-6"
+        style={{
+          fontSize: '0.85rem',
+          letterSpacing: 'clamp(0.18em, 2.5vw, 0.35em)',
+          animation: 'fadeUp 1s 0.3s both',
+        }}
       >
         For the Curious &amp; the Convinced
       </p>

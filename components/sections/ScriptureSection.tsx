@@ -3,24 +3,29 @@ import { useState } from 'react';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { BIBLE_BOOKS } from '@/lib/data';
 
-// Abbreviations for book names that overflow their pill buttons
+/**
+ * Abbreviation map for Bible book chips (audit M3).
+ *
+ * Rule: abbreviate ONLY when the book name is multi-word OR > 9 characters.
+ * That removes the inconsistency where short single-word books like
+ * "Numbers" or "Habakkuk" were being clipped to "NUM." / "HAB." while
+ * equally short books ("OBADIAH", "JONAH") were rendered in full.
+ * "Song of Solomon" → "Song" so it fits without ellipsizing mid-word.
+ */
 const ABBR: Record<string, string> = {
-  'Song of Solomon':  'Song of Sol.',
+  // Multi-word books
+  'Song of Solomon':  'Song',
   '1 Thessalonians':  '1 Thess.',
   '2 Thessalonians':  '2 Thess.',
   '1 Corinthians':    '1 Cor.',
   '2 Corinthians':    '2 Cor.',
+  '1 Chronicles':     '1 Chr.',
+  '2 Chronicles':     '2 Chr.',
+  // Single-word, longer than 9 chars
   'Lamentations':     'Lament.',
   'Ecclesiastes':     'Eccles.',
   'Deuteronomy':      'Deut.',
   'Philippians':      'Phil.',
-  '1 Chronicles':     '1 Chr.',
-  '2 Chronicles':     '2 Chr.',
-  'Nehemiah':         'Neh.',
-  'Zechariah':        'Zech.',
-  'Zephaniah':        'Zeph.',
-  'Habakkuk':         'Hab.',
-  'Numbers':          'Num.',
   'Revelation':       'Rev.',
 };
 
@@ -73,9 +78,9 @@ function BookGrid({ books, onSelect }: { books: string[]; onSelect: (book: strin
             padding: '0.5rem 0.6rem',
             fontSize: '0.74rem',
             color: 'var(--text-muted)',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            // Audit M3: drop nowrap+ellipsis so a long chip wraps gracefully
+            // instead of clipping to "SONG OF S…". The grid cell can grow.
+            lineHeight: 1.15,
           }}
           onMouseEnter={(e) => {
             const el = e.currentTarget;
@@ -167,7 +172,8 @@ export default function ScriptureSection({ hideHeader = false }: { hideHeader?: 
               <span className="section-label">The Living Word</span>
               <h2 className="section-title">Scripture Explorer</h2>
               <p className="text-text-light leading-relaxed mt-3 mb-8 mx-auto" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
-                Search by topic, or browse the Bible book by book. Every book linked to trusted study resources.
+                {/* Audit M4: include "ESV" so home/scripture both reflect the actual link target. */}
+                Search by topic, or browse the Bible book by book. Every book linked to trusted ESV study resources.
               </p>
             </>
           )}
