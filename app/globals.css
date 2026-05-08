@@ -27,6 +27,15 @@
   --gold-rgb: 201, 168, 76;
   --gold-glow-alpha: 0.08;
   --noise-opacity: 0.35;
+  /* Form-field tokens — see EmailSignup.tsx. Dark mode uses the panel bg
+     as the input bg with cream text; light mode overrides below to use
+     a cream surface with dark navy text and a darker gold border. */
+  --form-bg: rgba(20, 29, 53, 0.8);
+  --form-border: rgba(201, 168, 76, 0.2);
+  --form-border-focus: var(--gold);
+  --form-text: var(--cream);
+  --form-placeholder: rgba(245, 239, 224, 0.5);
+  --form-error: #f8a4a4; /* readable on both bgs */
   color-scheme: dark;
 }
 
@@ -47,6 +56,16 @@
   --gold-rgb: 138, 110, 47;
   --gold-glow-alpha: 0.06;
   --noise-opacity: 0.08;
+  /* Light-mode form override (audit C4): cream surface, dark text,
+     deeper-gold border so the field reads as clearly editable on the
+     cream page background. The error color is shifted toward red-brown
+     so it remains readable on cream. */
+  --form-bg: #ffffff;
+  --form-border: rgba(138, 110, 47, 0.45);
+  --form-border-focus: #6e5624;
+  --form-text: #1a1511;
+  --form-placeholder: rgba(43, 35, 24, 0.5);
+  --form-error: #9a2b1a;
   color-scheme: light;
 }
 
@@ -186,3 +205,33 @@ body.admin-page::before { display: none; }
 .hover-gold-bg-sm:hover { background: rgba(var(--gold-rgb), 0.09) !important; }
 
 [data-theme='light'] .hero-stars { display: none; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * TTS player animations (audit H6).
+ * Were inline `<style>` blocks nested inside <button> elements, which
+ * polluted the accessibility tree. Lifted to globals.
+ * ────────────────────────────────────────────────────────────────────────── */
+@keyframes tts-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes tts-bar {
+  from { transform: scaleY(0.3); opacity: 0.5; }
+  to   { transform: scaleY(1);   opacity: 1; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Subscribe form fields (audit C4).
+ * Use form tokens defined per theme above. Keeps fields readable in both
+ * dark mode (navy panel + cream text) and light mode (cream surface +
+ * dark text).
+ * ────────────────────────────────────────────────────────────────────────── */
+.subscribe-input {
+  background: var(--form-bg);
+  border: 1px solid var(--form-border);
+  color: var(--form-text);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.subscribe-input::placeholder { color: var(--form-placeholder); }
+.subscribe-input:focus { border-color: var(--form-border-focus); }
+.subscribe-error { color: var(--form-error); }
