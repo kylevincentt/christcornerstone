@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { DISCUSSIONS } from '@/lib/discussions';
+import { DISCUSSIONS, sortDiscussions } from '@/lib/discussions';
 
 export const metadata: Metadata = {
   title: 'Weekly Discussion',
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function WeeklyDiscussionIndexPage() {
-  // Newest first
-  const sorted = [...DISCUSSIONS].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  // Series-aware sort — Part 1 leads sequential teaching; newest series first.
+  const sorted = sortDiscussions(DISCUSSIONS);
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--midnight)', paddingTop: '7rem' }}>
