@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { DOCTRINES, APOLOGETICS_CATEGORIES, RELIGIONS } from '@/lib/data';
+import { DISCUSSIONS } from '@/lib/discussions';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://christcornerstone.org';
 
@@ -15,6 +16,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/scripture`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/library`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE_URL}/quotes`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/videos`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE_URL}/weekly-discussion`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
   ];
 
   const doctrineRoutes: MetadataRoute.Sitemap = DOCTRINES.map((d) => ({
@@ -38,6 +41,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...doctrineRoutes, ...apologeticsRoutes, ...religionRoutes];
-}
+  const discussionRoutes: MetadataRoute.Sitemap = DISCUSSIONS.map((d) => ({
+    url: `${SITE_URL}/weekly-discussion/${d.slug}`,
+    lastModified: new Date(d.date + 'T00:00:00'),
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  }));
 
+  return [
+    ...staticRoutes,
+    ...doctrineRoutes,
+    ...apologeticsRoutes,
+    ...religionRoutes,
+    ...discussionRoutes,
+  ];
+}
