@@ -53,6 +53,11 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false);
 
+  // Drawer links — Home + the seven public NAV_LINKS. Tracked here so the
+  // last index is known for the audit-H8 last-link border strip.
+  const drawerLinks: ReadonlyArray<[string, string]> = [['Home', '/'], ...NAV_LINKS];
+  const drawerLast = drawerLinks.length - 1;
+
   return (
     <>
       <nav
@@ -135,12 +140,13 @@ export default function Nav() {
             className="font-cinzel font-bold text-midnight bg-gold rounded-full mb-4 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase whitespace-nowrap">
             Start Here
           </Link>
-          {([['Home', '/'], ...NAV_LINKS] as ReadonlyArray<[string, string]>).map(([label, href]) => {
+          {drawerLinks.map(([label, href], i) => {
             const active = isActivePath(pathname, href);
+            const isLast = i === drawerLast;
             return (
               <Link key={label} href={href} onClick={closeMenu} aria-current={active ? 'page' : undefined}
                 className={'font-cinzel text-lg tracking-[0.18em] uppercase no-underline py-2.5 px-8 transition-colors duration-300 hover:text-gold w-full text-center max-w-sm first:border-t ' + (active ? 'text-gold' : 'text-text-light')}
-                style={{ borderBottom: '1px solid rgba(var(--gold-rgb), 0.08)' }}>
+                style={{ borderBottom: isLast ? 'none' : '1px solid rgba(var(--gold-rgb), 0.08)' }}>
                 {label}
               </Link>
             );
