@@ -129,12 +129,12 @@ export default function WeeklyDiscussionSection() {
   return (
     <section
       id="weekly-discussion"
-      className="py-10"
+      className="py-6 md:py-10"
       style={{ borderTop: '1px solid rgba(201,168,76,0.08)' }}
     >
       <AnimateOnScroll>
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 px-4 sm:px-8 md:px-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-5 md:mb-8 px-4 sm:px-8 md:px-16">
           <div>
             <span className="section-label">Faith &amp; Reason</span>
             <h2 className="section-title">Weekly Discussion</h2>
