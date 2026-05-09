@@ -46,7 +46,14 @@ export function sortDiscussions(items: Discussion[]): Discussion[] {
     list.push(d);
     groups.set(d.series, list);
   }
-  for (const [, list] of groups) {
+  // Note: Map.forEach (instead of `for (… of groups)`) because the project
+  // tsconfig sets no explicit `target` (defaults to ES5) and no
+  // `downlevelIteration`. `for…of` over a Map therefore fails to typecheck
+  // during `next build` with: "Type 'Map<…>' can only be iterated through
+  // when using the '--downlevelIteration' flag or with a '--target' of
+  // 'es2015' or higher." This was the regression that broke every Vercel
+  // deploy from PR #14 (2026-05-08 02:10 UTC) until the hotfix.
+  groups.forEach((list) => {
     list.sort((a, b) => {
       const pa = partNum(a.slug);
       const pb = partNum(b.slug);
@@ -55,7 +62,7 @@ export function sortDiscussions(items: Discussion[]): Discussion[] {
       if (pb !== null) return 1;
       return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
     });
-  }
+  });
   const seriesEntries = Array.from(groups.entries()).map(([series, list]) => {
     const maxDate = list.reduce((m, x) => (x.date > m ? x.date : m), '0000-00-00');
     return { series, list, maxDate };
