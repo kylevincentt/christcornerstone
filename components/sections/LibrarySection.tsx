@@ -61,13 +61,19 @@ export default function LibrarySection({ items, hideHeader = false }: Props) {
         </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {visibleItems.map((item) => (
+            {visibleItems.map((item, i) => {
+              /* Audit R2 M3: preview to 4 items per tab on mobile so a
+                 deep tab (e.g. Theologians) doesn't push everything below
+                 it down by 6 stacked cards' worth of height. Desktop
+                 (md:flex) shows the full set. */
+              const mobileHidden = i >= 4 ? 'hidden md:flex' : 'flex';
+              return (
               <a
                 key={item.id}
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col gap-1.5 no-underline rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 group"
+                className={`${mobileHidden} flex-col gap-1.5 no-underline rounded-2xl p-6 transition-all duration-300 hover:-translate-y-0.5 group`}
                 style={{
                   background: 'var(--navy)',
                   border: '1px solid rgba(201,168,76,0.07)',
@@ -98,7 +104,8 @@ export default function LibrarySection({ items, hideHeader = false }: Props) {
                   {item.link_text}
                 </span>
               </a>
-            ))}
+              );
+            })}
           </div>
         </div>
       </AnimateOnScroll>
