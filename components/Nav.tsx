@@ -14,6 +14,21 @@ const NAV_LINKS: ReadonlyArray<[string, string]> = [
   ['Videos', '/videos'],
 ];
 
+/* Audit R2 H2: drawer carries an extra Weekly Discussion entry that the
+   desktop nav doesn't (desktop already runs at its single-line width
+   budget). Order mirrors the Footer Explore column for IA consistency. */
+const DRAWER_LINKS: ReadonlyArray<[string, string]> = [
+  ['Home',              '/'],
+  ['Doctrine',          '/doctrine'],
+  ['Weekly Discussion', '/weekly-discussion'],
+  ['Apologetics',       '/apologetics'],
+  ['Religions',         '/religions'],
+  ['Scripture',         '/scripture'],
+  ['Library',           '/library'],
+  ['Quotes',            '/quotes'],
+  ['Videos',            '/videos'],
+];
+
 function isActivePath(pathname: string | null, href: string): boolean {
   if (!pathname) return false;
   if (href === '/') return pathname === '/';
@@ -53,10 +68,9 @@ export default function Nav() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  // Drawer links — Home + the seven public NAV_LINKS. Tracked here so the
-  // last index is known for the audit-H8 last-link border strip.
-  const drawerLinks: ReadonlyArray<[string, string]> = [['Home', '/'], ...NAV_LINKS];
-  const drawerLast = drawerLinks.length - 1;
+  // Tracked here so the last index is known for the audit-H8 last-link
+  // border strip.
+  const drawerLast = DRAWER_LINKS.length - 1;
 
   return (
     <>
@@ -136,11 +150,7 @@ export default function Nav() {
           className="flex flex-col items-center justify-center h-full px-4"
         >
           <p className="font-cinzel text-gold text-base tracking-[0.2em] mb-4">&bull; CHRISTCORNERSTONE</p>
-          <Link href="/start-here" onClick={closeMenu}
-            className="font-cinzel font-bold text-midnight bg-gold rounded-full mb-4 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase whitespace-nowrap">
-            Start Here
-          </Link>
-          {drawerLinks.map(([label, href], i) => {
+          {DRAWER_LINKS.map(([label, href], i) => {
             const active = isActivePath(pathname, href);
             const isLast = i === drawerLast;
             return (
@@ -151,6 +161,13 @@ export default function Nav() {
               </Link>
             );
           })}
+          {/* Audit R2 L1: Start Here moved below the link list so it
+              reads as the drawer's closing CTA, not a heading
+              attachment under the brand mark. */}
+          <Link href="/start-here" onClick={closeMenu}
+            className="font-cinzel font-bold text-midnight bg-gold rounded-full mt-6 px-8 py-3 no-underline hover:bg-gold-light transition-all text-sm tracking-[0.15em] uppercase whitespace-nowrap">
+            Start Here
+          </Link>
         </div>
       </div>
     </>
