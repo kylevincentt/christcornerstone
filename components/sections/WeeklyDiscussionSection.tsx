@@ -133,8 +133,9 @@ export default function WeeklyDiscussionSection() {
       style={{ borderTop: '1px solid rgba(201,168,76,0.08)' }}
     >
       <AnimateOnScroll>
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-5 md:mb-8 px-4 sm:px-8 md:px-16">
+        {/* Header — audit R2 M3+L2: tighter mb-3 on mobile, mb-8 desktop, to
+            match the Sunday Sermons section's mobile-density treatment. */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-3 md:mb-8 px-4 sm:px-8 md:px-16">
           <div>
             <span className="section-label">Faith &amp; Reason</span>
             <h2 className="section-title">Weekly Discussion</h2>
@@ -151,10 +152,12 @@ export default function WeeklyDiscussionSection() {
           </Link>
         </div>
 
-        {/* Horizontal scroll */}
+        {/* Horizontal scroll.
+            Audit R2 M3+L2: pb-4 → pb-1 md:pb-4 trims the carousel's bottom
+            padding on mobile to match the Sunday Sermons treatment. */}
         <SermonCardScroller>
           <div
-            className="flex gap-5 pb-4"
+            className="flex gap-5 pb-1 md:pb-4"
             style={{ paddingLeft: 'clamp(1rem, 4vw, 4rem)', paddingRight: 'clamp(1rem, 4vw, 4rem)' }}
           >
             {sorted.map((discussion) => (
