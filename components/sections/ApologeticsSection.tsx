@@ -126,11 +126,16 @@ export default function ApologeticsSection({ questions, categories }: Props) {
             Choose a category to explore structured defenses of the Christian faith.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {categories.map((cat) => (
+            {categories.map((cat, i) => {
+              /* Audit R2 M3: preview 4 categories on mobile (2 rows of 2),
+                 show the full set on md+. View All Questions pill above
+                 already hands off to /apologetics for the complete index. */
+              const mobileHidden = i >= 4 ? 'hidden md:block' : 'block';
+              return (
               <Link
                 key={cat.id}
                 href={`/apologetics/${cat.slug}`}
-                className="hover-gold-bg-sm block no-underline rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5"
+                className={`${mobileHidden} hover-gold-bg-sm no-underline rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5`}
                 style={{
                   background: cat.slug === 'quick'
                     ? 'rgba(201,168,76,0.08)'
@@ -148,7 +153,8 @@ export default function ApologeticsSection({ questions, categories }: Props) {
                   {cat.description}
                 </p>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </AnimateOnScroll>
       </div>
