@@ -128,8 +128,9 @@ export default function WeeklySermonSection({ sermons }: Props) {
       style={{ borderTop: '1px solid rgba(201,168,76,0.08)' }}
     >
       <AnimateOnScroll>
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-5 md:mb-8 px-4 sm:px-8 md:px-16">
+        {/* Header — audit R2 L2: tighter mb-3 on mobile, mb-8 desktop, so the
+            inner header doesn't add another row of empty navy below the card. */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-3 md:mb-8 px-4 sm:px-8 md:px-16">
           <div>
             <span className="section-label">Grace Life Community Church</span>
             <h2 className="section-title">Sunday Sermons</h2>
@@ -146,10 +147,15 @@ export default function WeeklySermonSection({ sermons }: Props) {
           </Link>
         </div>
 
-        {/* Horizontal scroll with arrow */}
+        {/* Horizontal scroll with arrow.
+            Audit R2 L2: pb-4 → pb-1 md:pb-4 trims the carousel's bottom
+            padding on mobile so the empty navy strip between the cards
+            and the start of the next section is right-sized. Desktop
+            keeps pb-4 since wider carousels benefit from the breathing
+            room. */}
         <SermonCardScroller>
           <div
-            className="flex gap-5 pb-4"
+            className="flex gap-5 pb-1 md:pb-4"
             style={{ paddingLeft: 'clamp(1rem, 4vw, 4rem)', paddingRight: 'clamp(1rem, 4vw, 4rem)' }}
           >
             {sermons.map((sermon) => (
