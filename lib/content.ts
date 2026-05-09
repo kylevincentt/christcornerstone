@@ -29,9 +29,9 @@ import type {
   WeeklySermon,
 } from '@/types';
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Cache tag names — keep in sync with /api/admin/content/route.ts
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const TAGS = {
   doctrines: 'doctrines',
@@ -45,15 +45,15 @@ export const TAGS = {
   weekly_sermons: 'weekly_sermons',
 } as const;
 
-// ──────────────────────────────────────────────────────────────────────────
-// Icon overrides (audit refs: H3 Mormonism, H4 Atheism, H5 apologetics)
+// ─────────────────────────────────────────────────────────────────────────
+// Icon overrides (audit refs: H3 Mormonism, H4 Atheism, H5 apologetics + library)
 //
 // lib/data.ts has shipped clubs-suit / prohibition / color-emoji icons that
 // don't fit the monochrome gold-on-navy aesthetic or, in two cases, are
 // outright wrong for the subject (clubs-suit shamrock for Mormonism;
 // red "no entry" sign for Atheism). Applied post-fetch so DB rows are
 // also corrected without an admin-side migration.
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 const RELIGION_ICON_OVERRIDES: Record<string, string> = {
   // Was '♧' (clubs/shamrock — reads as a card-suit shape).
   // Replaced with a 4-pointed star — neutral, monoline, doesn't claim
@@ -76,6 +76,27 @@ const APOLO_CAT_ICON_OVERRIDES: Record<string, string> = {
   quick: '➤',          // arrow — quick / move fast
 };
 
+// Library tab card icons (audit H5 remainder).
+// Audit specifically flagged "Library 'Bibles Online' tab cards (book, blue
+// circle, calculator)". Extended the fix to other tabs whose data-layer
+// emoji clashed with the monoline aesthetic. Lewis lion preserved per
+// audit's "small but charming" note.
+const LIBRARY_ICON_OVERRIDES: Record<string, string> = {
+  // Bibles tab — was 📖 🔵 📱
+  'bible gateway': '✜',
+  'blue letter bible': '◐',
+  'youversion': '❖',
+  // Study tab — was 🏕 🔗 ; ESV Bible Online's ✠ already monoline, kept
+  'logos bible software': '⊙',
+  'bible hub': '⊞',
+  // Theologians — was 🦁 🌊 ⛓ ; Lewis lion kept ("small but charming")
+  'tim keller': '◊',
+  'r.c. sproul': '✚',
+  // Media — was 🍞 🎙 ⚔ ; Reasonable Faith ⚔ kept (already monoline-ish)
+  'the bible project': '▦',
+  'unbelievable?': '⌘',
+};
+
 function applyIconOverride<T extends { slug: string; icon: string }>(
   rows: T[],
   overrides: Record<string, string>
@@ -85,9 +106,16 @@ function applyIconOverride<T extends { slug: string; icon: string }>(
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────
+function applyLibraryIconOverride(rows: LibraryItem[]): LibraryItem[] {
+  return rows.map((row) => {
+    const key = row.name.toLowerCase().trim();
+    return LIBRARY_ICON_OVERRIDES[key] ? { ...row, icon: LIBRARY_ICON_OVERRIDES[key] } : row;
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // Helpers
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 /**
  * Hard cap on every DB query. Without this, a slow / unreachable Neon
@@ -128,9 +156,9 @@ async function safeQuery<T>(fn: () => Promise<T[]>, fallback: T[], label = 'quer
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Doctrines
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const getDoctrines = unstable_cache(
   async (): Promise<Doctrine[]> =>
@@ -152,9 +180,9 @@ export async function getDoctrineBySlug(slug: string): Promise<Doctrine | null> 
   return all.find((d) => d.slug === slug) || null;
 }
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Apologetics
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const getApologeticsQuestions = unstable_cache(
   async (): Promise<ApologeticsQuestion[]> =>
@@ -192,9 +220,9 @@ export async function getApologeticsCategoryBySlug(
   return all.find((c) => c.slug === slug) || null;
 }
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Religions
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const getReligions = unstable_cache(
   async (): Promise<Religion[]> => {
@@ -227,9 +255,9 @@ export async function getReligionBySlug(slug: string): Promise<Religion | null> 
   return all.find((r) => r.slug === slug) || null;
 }
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Quotes
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const getQuotes = unstable_cache(
   async (): Promise<Quote[]> =>
@@ -244,26 +272,28 @@ export const getQuotes = unstable_cache(
   { tags: [TAGS.quotes] }
 );
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Library items
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const getLibraryItems = unstable_cache(
-  async (): Promise<LibraryItem[]> =>
-    safeQuery<LibraryItem>(
+  async (): Promise<LibraryItem[]> => {
+    const rows = await safeQuery<LibraryItem>(
       async () =>
         (await sql!`SELECT id, tab, icon, name, description, url, link_text, sort_order
                      FROM library_items ORDER BY sort_order ASC NULLS LAST`) as unknown as LibraryItem[],
       FALLBACK_LIBRARY,
       'library_items'
-    ),
+    );
+    return applyLibraryIconOverride(rows);
+  },
   ['library_items:all'],
   { tags: [TAGS.library_items] }
 );
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Daily verses
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const getDailyVerses = unstable_cache(
   async (): Promise<DailyVerse[]> =>
@@ -287,12 +317,12 @@ export async function getDailyVerse(): Promise<DailyVerse> {
   return verses[dayOfYear % verses.length];
 }
 
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 // Weekly Sermons
 //
 // Has its own try/catch instead of safeQuery (because of the row-shape
 // transform), so wrap the await in withTimeout directly.
-// ──────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────
 
 export const getWeeklySermons = unstable_cache(
   async (): Promise<WeeklySermon[]> => {
