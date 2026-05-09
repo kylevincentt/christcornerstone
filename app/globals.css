@@ -47,12 +47,16 @@
   --deep-navy: #f6efd9;
   --navy: #e8ddbf;
   --gold: #8a6e2f;
-  /* Audit L4 + M7: was #6e5624. The hero's italic "The Life of Faith."
-     uses text-gold-light → var(--gold-light); on the cream page background
-     the lighter end of that brown was reading as washed-out and the lower-
-     case 'f' descenders blended into the bg. Darkened to #4d3a14 (deep
-     burnt-umber) so the italic title pops cleanly against cream. */
-  --gold-light: #4d3a14;
+  /* Audit L4 + M7 + R2 M1/M2: the hero's italic "The Life of Faith." and
+     hero pill buttons (START HERE / EXPLORE DOCTRINE) use --gold-light.
+     - Original was #6e5624: descender-clipping + washed-out on cream.
+     - L4 darkened to #4d3a14 to fix legibility, but the R2 audit caught
+       that this killed the gold/serif visual lift — italic and buttons
+       both read as plain dark brown, not warm gold.
+     - #7a5e22 is the middle ground: more saturated and visibly gold
+       (so the italic accent and pills read as gold again) while still
+       clearing 4.5:1 contrast on cream (~5.6:1), preserving legibility. */
+  --gold-light: #7a5e22;
   --gold-dim: #a88636;
   --cream: #1a1511;
   --cream-dark: #2b2318;
