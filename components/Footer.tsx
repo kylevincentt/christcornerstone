@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import EmailSignup from './EmailSignup';
+import DailyVerseSignup from './DailyVerseSignup';
 
 export default function Footer() {
   return (
@@ -11,19 +11,8 @@ export default function Footer() {
       className="px-4 sm:px-8 lg:px-16 pt-12 pb-8"
     >
       <div className="max-w-6xl mx-auto">
-        <div
-          className="rounded-2xl p-10 mb-12 text-center"
-          style={{ background: 'rgba(var(--gold-rgb), 0.04)', border: '1px solid rgba(var(--gold-rgb), 0.12)' }}
-        >
-          <span className="section-label block mb-3">Daily Verse & Study Material</span>
-          <h3 className="font-cormorant text-3xl font-light text-cream mb-2">
-            Begin each day with <em className="not-italic text-gold-light">Scripture</em>
-          </h3>
-          <p className="text-text-muted mb-8 max-w-md mx-auto leading-relaxed">
-            Receive a daily verse and curated study material — delivered quietly to your inbox each morning.
-          </p>
-          <EmailSignup />
-        </div>
+        {/* Audit L3: per-session dismissable signup card. */}
+        <DailyVerseSignup />
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-8">
           <div className="md:col-span-2">

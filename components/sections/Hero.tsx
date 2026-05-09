@@ -86,11 +86,15 @@ export default function HeroSection() {
         For the Curious &amp; the Convinced
       </p>
 
+      {/* Audit M7: line-height bumped 1.05 → 1.12 + paddingBottom: 0.06em so
+          the lowercase 'f' descender in "Faith" never gets clipped by the
+          next element's margin in either theme. */}
       <h1
         className="font-cormorant font-light text-cream mb-3"
         style={{
           fontSize: 'clamp(3.5rem, 8vw, 7rem)',
-          lineHeight: 1.05,
+          lineHeight: 1.12,
+          paddingBottom: '0.06em',
           animation: 'fadeUp 1s 0.5s both',
         }}
       >
