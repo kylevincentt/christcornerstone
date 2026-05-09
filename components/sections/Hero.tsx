@@ -29,9 +29,14 @@ export default function HeroSection() {
   }, []);
 
   return (
+    /* Audit R2 M3: was min-h-screen on every viewport. The hero content
+       measures ~580px on iPhone — the rest of the 844px is baked-in
+       whitespace. min-h-[85vh] on mobile + md:min-h-screen on desktop
+       keeps the cinematic full-height feel on wide viewports while
+       saving ~125px on the mobile homepage total. */
     <section
       id="home"
-      className="min-h-screen flex flex-col items-center justify-center text-center relative px-8 overflow-hidden"
+      className="min-h-[85vh] md:min-h-screen flex flex-col items-center justify-center text-center relative px-8 overflow-hidden"
       style={{ paddingTop: '7rem', paddingBottom: '3rem' }}
     >
       {/* Stars */}

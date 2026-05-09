@@ -16,21 +16,41 @@ export default function ReligionsSection({ religions }: Props) {
     >
       <AnimateOnScroll>
         <div className="max-w-6xl mx-auto">
-          <span className="section-label">Understanding Other Worldviews</span>
-          <h2 className="section-title">
-            Other Religions{' '}
-            <span className="text-gold-light">&amp; Christianity</span>
-          </h2>
-          <p className="text-text-light leading-relaxed mt-3" style={{ fontSize: '1.05rem', maxWidth: '560px' }}>
-            Every major religion asks the same deep questions. See how Christianity&apos;s answers compare — respectfully, clearly, and honestly.
-          </p>
+          {/* Header — audit R2 M3: ship a "View All Religions →" pill so the
+              mobile-collapsed list (3 of N) has a clear path to the full
+              index, mirroring the Sunday Sermons / Weekly Discussion
+              header pattern. */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <span className="section-label">Understanding Other Worldviews</span>
+              <h2 className="section-title">
+                Other Religions{' '}
+                <span className="text-gold-light">&amp; Christianity</span>
+              </h2>
+              <p className="text-text-light leading-relaxed mt-3 max-w-lg" style={{ fontSize: '1.05rem' }}>
+                Every major religion asks the same deep questions. See how Christianity&apos;s answers compare — respectfully, clearly, and honestly.
+              </p>
+            </div>
+            <Link
+              href="/religions"
+              className="font-cinzel font-bold tracking-[0.12em] uppercase text-gold bg-transparent px-6 py-3 rounded-full no-underline transition-all hover:bg-[rgba(201,168,76,0.08)] whitespace-nowrap self-start md:self-end"
+              style={{ fontSize: '0.65rem', border: '1px solid rgba(201,168,76,0.4)' }}
+            >
+              View All Religions &rarr;
+            </Link>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {religions.map((religion) => (
+            {religions.map((religion, i) => {
+              /* Audit R2 M3: hide religions past index 2 on mobile so the
+                 home page renders ≤3 cards on phone widths. Desktop
+                 (md:block) still shows the full grid. */
+              const mobileHidden = i >= 3 ? 'hidden md:block' : 'block';
+              return (
               <Link
                 key={religion.id}
                 href={`/religions/${religion.slug}`}
-                className="block no-underline rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group"
+                className={`${mobileHidden} no-underline rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group`}
                 style={{
                   background: 'var(--deep-navy)',
                   border: '1px solid rgba(201,168,76,0.08)',
@@ -83,7 +103,8 @@ export default function ReligionsSection({ religions }: Props) {
                   </span>
                 </div>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       </AnimateOnScroll>

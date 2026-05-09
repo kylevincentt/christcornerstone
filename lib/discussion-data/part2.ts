@@ -5,7 +5,7 @@ export const PART2: Discussion = {
     slug: 'doctrine-of-christ-2-apollinarianism',
     youtube_id: 'T4tOA7O3ETg',
     title: 'Doctrine of Christ Part 2: Apollinarianism',
-    date: '2026-05-11',
+    date: '2026-05-05',
     series: 'Defenders · Reasonable Faith',
     summary:
       'Dr. William Lane Craig continues the Christology unit by examining the first major monophysite solution to the Incarnation: Apollinarianism. Apollinaris of Laodicea (died 390 AD) identified a key problem — if Christ possessed both a complete human mind and the divine Logos, the result would be merely God indwelling a man, not true Incarnation. His solution drew on a tripartite anthropology: humans consist of a body (soma), animal soul (psyche), and rational mind (nous). In Christ, the Logos replaced the human nous, constitutionally uniting with humanity rather than merely inhabiting it. Craig traces this model back to Athanasius, surveys its genuine advantages — including its explanation of Christ’s sinlessness — and then presents the two fatal objections that led to its condemnation in 377 AD: it reduces human nature to a merely animal nature, and by failing to assume a human mind, Christ cannot redeem the human mind. A rich class discussion probes the unsolved tension of Christ’s real temptations, free will in heaven, the transmission of original sin, and the two wills of Christ.',

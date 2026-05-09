@@ -35,10 +35,13 @@ export default async function HomePage() {
     <>
       <HeroSection />
 
-      {/* Video promo card */}
+      {/* Video promo card.
+          Audit R2 M3: trimmed mobile padding (py-6/px-6) + tighter h2/p
+          margins so the card carries proper desktop breathing room
+          (md:py-8/md:px-8) without dragging mobile content density. */}
       <Link href="/videos" className="block no-underline group" aria-label="Watch: Why Should I Believe the Bible?">
         <div
-          className="text-center py-8 px-8 relative overflow-hidden"
+          className="text-center py-6 px-6 md:py-8 md:px-8 relative overflow-hidden"
           style={{
             background: 'linear-gradient(135deg, var(--deep-navy) 0%, var(--midnight) 100%)',
             borderTop: '1px solid rgba(201,168,76,0.1)',
@@ -55,19 +58,19 @@ export default async function HomePage() {
             aria-hidden="true"
           />
 
-          <p className="font-cinzel text-[0.7rem] tracking-[0.3em] uppercase text-gold mb-4 relative" style={{ opacity: 0.7 }}>
+          <p className="font-cinzel text-[0.7rem] tracking-[0.3em] uppercase text-gold mb-3 md:mb-4 relative" style={{ opacity: 0.7 }}>
             Featured Video
           </p>
 
           <h2
-            className="font-cormorant font-semibold text-cream max-w-2xl mx-auto mb-4 relative transition-colors duration-300 group-hover:text-gold"
+            className="font-cormorant font-semibold text-cream max-w-2xl mx-auto mb-3 md:mb-4 relative transition-colors duration-300 group-hover:text-gold"
             style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)', lineHeight: 1.35 }}
           >
             Why Should I Believe the Bible?
           </h2>
 
           <p
-            className="font-lato text-text-light max-w-2xl mx-auto mb-6 relative"
+            className="font-lato text-text-light max-w-2xl mx-auto mb-5 md:mb-6 relative"
             style={{ fontSize: '1rem', lineHeight: 1.75 }}
           >
             &ldquo;I choose to believe the Bible because it is a reliable collection of historical documents written by
@@ -91,9 +94,15 @@ export default async function HomePage() {
       <ReligionsSection religions={religions} />
       <QuotesSection quotes={quotes} />
 
+      {/* Today's Verse — audit R2 M3: hidden on mobile because the
+          DailyVerseSignup wrapper rendered in the footer already shows
+          a "Verse of the Day" panel from the same getDailyVerse()
+          source. On mobile the standalone section was showing the same
+          verse twice within one screen. Desktop keeps it for the wider
+          rhythm. */}
       <section
         id="todays-verse"
-        className="py-8 px-6 text-center"
+        className="hidden md:block py-8 px-6 text-center"
         style={{ background: 'var(--midnight)', borderTop: '1px solid rgba(201,168,76,0.1)' }}
       >
         <span className="font-cinzel text-gold-dim tracking-[0.25em] uppercase block mb-3" style={{ fontSize: '0.78rem' }}>
