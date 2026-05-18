@@ -21,8 +21,8 @@ const G = (a: number) => `${gold}${a})`;
 /**
  * Estimate playback duration of a text spoken by SpeechSynthesis.
  * ~165 words/minute at rate=1; scale inversely with playbackRate.
- * (Used only when ElevenLabs is unavailable and we fall back to the browser
- * speech engine, which exposes neither duration nor precise time.)
+ * (Used only when the server TTS is unavailable and we fall back to the
+ * browser speech engine, which exposes neither duration nor precise time.)
  */
 function estimateDuration(text: string, rate: number): number {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
@@ -38,7 +38,7 @@ export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary
   const [duration, setDuration] = useState(0);
   const [speedIdx, setSpeedIdx] = useState(1);
 
-  // Native (ElevenLabs MP3) state
+  // Native (server-generated MP3) state
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const blobUrlRef = useRef<string | null>(null);
 
@@ -66,7 +66,7 @@ export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary
   const speed = SPEEDS[speedIdx];
   const pct = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
-  // ── Native (ElevenLabs) playback ──────────────────────────────────────
+  // ── Native (server MP3) playback ──────────────────────────────────────
   const teardownNative = useCallback(() => {
     const a = audioRef.current;
     if (a) { a.pause(); a.src = ''; audioRef.current = null; }
@@ -169,7 +169,7 @@ export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary
     startBrowserUtterance(0);
   }, [startBrowserUtterance]);
 
-  // ── Top-level start (try ElevenLabs, fall back to browser TTS) ────────
+  // ── Top-level start (try server TTS, fall back to browser TTS) ────────
   const startAudio = useCallback(async () => {
     if (blobUrlRef.current) {
       setPhase('loading');
@@ -194,7 +194,7 @@ export default function DiscussionAudioPlayer({ text, label = 'Listen to Summary
       playBlobUrl(url);
       return;
     } catch (err) {
-      // ElevenLabs unavailable (quota exceeded, network error, missing config).
+      // Server TTS unavailable (quota exceeded, network error, missing config).
       // Fall back to the browser's built-in speech engine so the button still
       // does something useful.
       if (typeof window !== 'undefined' && window.speechSynthesis) {

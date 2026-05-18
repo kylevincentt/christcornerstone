@@ -1,9 +1,39 @@
 /**
  * Shared TTS helpers.
- * Calls ElevenLabs with the Lushy voice and persists the MP3 to Vercel Blob.
- * Requires env: ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID, BLOB_READ_WRITE_TOKEN
+ * Calls Google Cloud Text-to-Speech (Neural2 voice) and persists the MP3 to Vercel Blob.
+ * Requires env: GOOGLE_APPLICATION_CREDENTIALS_JSON, BLOB_READ_WRITE_TOKEN
  */
 import { put } from '@vercel/blob';
+import { TextToSpeechClient } from '@google-cloud/text-to-speech';
+
+const DEFAULT_VOICE = 'en-US-Neural2-D';
+const DEFAULT_LANGUAGE = 'en-US';
+
+let cachedClient: TextToSpeechClient | null = null;
+
+function getClient(): TextToSpeechClient {
+  if (cachedClient) return cachedClient;
+  const json = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+  if (!json) throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON not configured');
+  const credentials = JSON.parse(json);
+  cachedClient = new TextToSpeechClient({
+    credentials,
+    projectId: credentials.project_id,
+  });
+  return cachedClient;
+}
+
+export async function synthesizeMp3(text: string): Promise<Buffer> {
+  const client = getClient();
+  const [response] = await client.synthesizeSpeech({
+    input: { text },
+    voice: { languageCode: DEFAULT_LANGUAGE, name: DEFAULT_VOICE },
+    audioConfig: { audioEncoding: 'MP3' },
+  });
+  const audio = response.audioContent;
+  if (!audio) throw new Error('Google TTS returned empty audio');
+  return Buffer.isBuffer(audio) ? audio : Buffer.from(audio);
+}
 
 export function buildSermonText(
   summary: string,
@@ -20,48 +50,15 @@ export function buildSermonText(
 /**
  * Generates TTS audio for a sermon and uploads it to Vercel Blob.
  * Returns the public CDN URL.
- * Throws if ElevenLabs or Blob upload fails.
+ * Throws if Google TTS or Blob upload fails.
  */
 export async function generateAndStoreAudio(
   slug: string,
   summary: string,
   additionalContext?: string | null
 ): Promise<string> {
-  const apiKey = process.env.ELEVENLABS_API_KEY;
-  const voiceId = process.env.ELEVENLABS_VOICE_ID;
-
-  if (!apiKey || !voiceId) throw new Error('ElevenLabs env vars not configured');
-
   const text = buildSermonText(summary, additionalContext);
-
-  const elevenRes = await fetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-    {
-      method: 'POST',
-      headers: {
-        'xi-api-key': apiKey,
-        'Content-Type': 'application/json',
-        Accept: 'audio/mpeg',
-      },
-      body: JSON.stringify({
-        text,
-        model_id: 'eleven_turbo_v2_5',
-        voice_settings: {
-          stability: 0.45,
-          similarity_boost: 0.85,
-          style: 0.3,
-          use_speaker_boost: true,
-        },
-      }),
-    }
-  );
-
-  if (!elevenRes.ok) {
-    const detail = await elevenRes.text();
-    throw new Error(`ElevenLabs ${elevenRes.status}: ${detail}`);
-  }
-
-  const buffer = await elevenRes.arrayBuffer();
+  const buffer = await synthesizeMp3(text);
 
   const { url } = await put(`sermons/${slug}.mp3`, buffer, {
     access: 'public',
