@@ -15,8 +15,11 @@ import type { Discussion } from './discussion-data/types';
 import { PART1 } from './discussion-data/part1';
 import { PART2 } from './discussion-data/part2';
 import { PART3 } from './discussion-data/part3';
+import { PART4 } from './discussion-data/part4';
+import { PART5 } from './discussion-data/part5';
+import { PART6 } from './discussion-data/part6';
 
-export const DISCUSSIONS: Discussion[] = [PART1, PART2, PART3];
+export const DISCUSSIONS: Discussion[] = [PART1, PART2, PART3, PART4, PART5, PART6];
 
 export function getDiscussionBySlug(slug: string): Discussion | undefined {
   return DISCUSSIONS.find((d) => d.slug === slug);
