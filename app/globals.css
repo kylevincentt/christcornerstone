@@ -152,6 +152,11 @@ body::before {
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
+/* Hide scrollbar on horizontally-scrollable tab strips (Revelation Study).
+   Content stays scrollable; only the visual bar is suppressed. */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 .section-label {
   font-family: 'Cinzel', serif;
   /* Bumped from 0.78rem — slightly larger for legibility at wide tracking. */

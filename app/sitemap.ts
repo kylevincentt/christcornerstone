@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
     { url: `${SITE_URL}/start-here`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE_URL}/doctrine`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${SITE_URL}/revelation-study`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/apologetics`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE_URL}/religions`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/scripture`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
