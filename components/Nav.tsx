@@ -6,11 +6,11 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 const NAV_LINKS: ReadonlyArray<[string, string]> = [
   ['Doctrine', '/doctrine'],
+  ['Revelation', '/revelation-study'],
   ['Apologetics', '/apologetics'],
   ['Religions', '/religions'],
   ['Scripture', '/scripture'],
   ['Library', '/library'],
-  ['Quotes', '/quotes'],
   ['Videos', '/videos'],
 ];
 
@@ -20,6 +20,7 @@ const NAV_LINKS: ReadonlyArray<[string, string]> = [
 const DRAWER_LINKS: ReadonlyArray<[string, string]> = [
   ['Home',              '/'],
   ['Doctrine',          '/doctrine'],
+  ['Revelation Study',  '/revelation-study'],
   ['Weekly Discussion', '/weekly-discussion'],
   ['Apologetics',       '/apologetics'],
   ['Religions',         '/religions'],

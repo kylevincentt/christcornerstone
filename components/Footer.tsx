@@ -28,6 +28,7 @@ export default function Footer() {
               {[
                 ['Start Here', '/start-here'],
                 ['Doctrine', '/doctrine'],
+                ['Revelation Study', '/revelation-study'],
                 ['Weekly Discussion', '/weekly-discussion'],
                 ['Apologetics', '/apologetics'],
                 ['Religions', '/religions'],
